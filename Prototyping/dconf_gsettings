@@ -1,0 +1,1 @@
+for i in `gsettings list-schemas`; do for x in `gsettings list-keys $i`; do echo "$i : $x : $(gsettings get $i $x)";done ; done
