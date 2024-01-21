@@ -77,6 +77,18 @@ function dblue(){
 ###############################################################################################################################
 
 
+#prompts user for current user
+#------------------------------------------------------------------------------------------
+space
+yellow "Current working directory is" ; pwd
+space
+blue "What is the name of the user you are currently using? (ex: haha if /home/haha/Desktop/..."
+read CUSER
+#------------------------------------------------------------------------------------------
+
+
+
+
 ###############################################################################################################################
 #                                                                                                                             #
 #                                             #Configuring Updates#                                                           #
@@ -86,12 +98,17 @@ function dblue(){
 
 #Ensure correct repositories
 #--------------------------#
-
 echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -c | awk '{print $2}') main restricted universe multiverse" > /etc/apt/sources.list
 echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -c | awk '{print $2}')-security main restricted universe multiverse" >> /etc/apt/sources.list
 echo "deb http://security.ubuntu.com/ubuntu/ $(lsb_release -c | awk '{print $2}')-security main restricted universe multiverse" >> /etc/apt/sources.list
-echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -c | awk '{print $2}')-updates main universe restricted multiverse" >> /etc/apt/sources.list
+echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -c | awk '{print $2}')-updates main universe restricted multiverse" >> /etc/apt/sources.lists
+sudo apt update
+#--------------------------#
 
+#--------------------------#
+sudo apt-get install dbus-x11
+clear
+su -l $CUSER -c 'gsettings set com.ubuntu.update-notifier regular-auto-launch-interval 0'
 #--------------------------#
 
 
