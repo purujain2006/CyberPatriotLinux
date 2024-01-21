@@ -105,10 +105,30 @@ echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -c | awk '{print $2}')
 sudo apt update
 #--------------------------#
 
+#Secure Update Settings
 #--------------------------#
+
+#security repository
+echo """
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "0";
+APT::Periodic::Unattended-Upgrade "1";
+""" > /etc/apt/apt.conf.d/10periodic
+
+#auto-upgrade + lts support
+echo """
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "0";
+APT::Periodic::Unattended-Upgrade "1";
+""" > /etc/apt/apt.conf.d/20auto-upgrades
+
+#other notify
 sudo apt-get install dbus-x11
 clear
 su -l $CUSER -c 'gsettings set com.ubuntu.update-notifier regular-auto-launch-interval 0'
+
 #--------------------------#
 
 
