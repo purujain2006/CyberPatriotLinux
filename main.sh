@@ -94,6 +94,7 @@ sudo apt update
 
 #Secure Update Settings
 #--------------------------#
+
 #security repository
 echo """
 APT::Periodic::Update-Package-Lists "1";
@@ -114,6 +115,51 @@ APT::Periodic::Unattended-Upgrade "1";
 sudo apt-get install dbus-x11
 clear
 su -l $CUSER -c 'gsettings set com.ubuntu.update-notifier regular-auto-launch-interval 0'
+
 #--------------------------#
 
 ###############################################################################################################################
+
+#Add new users 
+#----------------------------------------------------------------------------------------
+space
+echo "Adding new users.. with password: dq*eb5,69~n)_-JU<&V8 "
+space
+
+for i in `cat /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/newusers.txt` ; do sudo useradd $i > /dev/null 2>&1 ; echo $i >> /home/$CUSER/Desktop/Scripting-main/Scripting-main/users.txt; echo "Added new user " $i ; done
+for i in `cat /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/newusers.txt` ; do echo $i:"dq*eb5,69~n)_-JU<&V8" | sudo chpasswd ;  done
+
+echo "Done adding users."
+space
+#----------------------------------------------------------------------------------------
+
+#Changing Passwords by asking user to place users in passwords.txt
+#------------------------------------------------------------------------------------------
+space
+red "Changing passwords..."
+space
+space
+for i in `cat /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/users.txt` ; do echo $i:"dq*eb5,69~n)_-JU<&V8" | sudo chpasswd ;  echo "Done changing password for: " $i " ...";  done
+echo "root:dq*eb5,69~n)_-JU<&V8" | sudo chpasswd; echo "Done changing password for: root..."
+space
+space
+echo "Done changing passwords..."
+#------------------------------------------------------------------------------------------
+
+#fix non-bash shells for UID 1000+ users
+#------------------------------------------------------------------------------------------
+for line in $(cat /etc/passwd | cut -d ":" -f 1)
+	do
+		if [ $(id -u $line) -lt 1000 ]
+		then
+			sudo usermod -s /bin/false $line
+		fi
+		
+		if [ $(id -u $line) -eq 0 ] || [ $(id -u $line) -gt 999 ]
+		then
+			sudo usermod -s /bin/bash $line
+		fi
+	done
+#-----------------------------------------------------------------------------------------
+
+
