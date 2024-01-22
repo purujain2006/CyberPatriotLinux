@@ -2,7 +2,7 @@ for i in `cat /home/debian/dir`; do cd $i; echo $i; echo "----------------------
 
 sudo for i in `cat /home/debian/dir`; do cd $i; echo $i; echo "---------------------------------------------------------------------------"; find $i/ -maxdepth 1 -type f -print0 | while IFS= read -r -d '' file; do permissions=$(stat -c "%A" "$file"); sha256=$(sha256sum "$file" | awk '{print $1}'); echo "$permissions $file $sha256"; done; echo "---------------------------------------------------------------------------"; done
 
-
+clear
 # Define minimum UID for normal users
 MIN_UID=1000
 
@@ -19,24 +19,20 @@ for user in $users_to_remove; do
         echo "Found hidden user: $user"
         
         # Prompt for confirmation
-        read -p "Are you sure you want to remove user $user? [y/N] " -n 1 -r
+        read -p "Do you want to remove user $user? [y/n] " -n 1 -r
         echo
-        
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            # Backup /etc/passwd, /etc/shadow, and /etc/group
-            cp /etc/passwd{,.bak}
-            cp /etc/shadow{,.bak}
-            cp /etc/group{,.bak}
-            
             # Remove user
-            userdel -r $user
+            sudo deluser $user
             if [ $? -eq 0 ]; then
-                echo "User $user removed successfully."
+                echo "Hidden User $user removed successfully."
             else
-                echo "Failed to remove user $user."
+                echo "FAILED to remove user $user."
             fi
         else
             echo "Aborted removal of user $user."
         fi
+        sleep 0.5s
+        clear
     fi
 done
