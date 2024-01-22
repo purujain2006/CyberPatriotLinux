@@ -120,6 +120,17 @@ su -l $CUSER -c 'gsettings set com.ubuntu.update-notifier regular-auto-launch-in
 
 ###############################################################################################################################
 
+
+
+
+
+
+###############################################################################################################################
+#                                                                                                                             #
+#                                             #Users, Passwords, Lockout                                                      #
+#                                                                                                                             #
+###############################################################################################################################
+
 #Add new users 
 #----------------------------------------------------------------------------------------
 space
@@ -162,35 +173,26 @@ for line in $(cat /etc/passwd | cut -d ":" -f 1)
 	done
 #-----------------------------------------------------------------------------------------
 
-#Look for HIDDEN USERS
+#Look for HIDDEN USERS (humans <1000 UID)
 #-----------------------------------------------------------------------------------------
 clear
-# Define minimum UID for normal users
 MIN_UID=1000
-
-# Define system account names that should never be removed
 SYSTEM_ACCOUNTS=("root" "daemon" "bin" "sys" "sync" "games" "man" "lp" "mail" "news" "uucp" "proxy" "www-data" "backup" "list" "irc" "gnats" "nobody" "systemd-network" "systemd-resolve" "syslog" "messagebus" "_apt" "lxd" "uuidd" "dnsmasq" "landscape" "pollinate" "sshd")
-
 space
 echo -n "Scanning for "; green "hidden users..."
 space
 red "DO NOT REMOVE ANY ***NON-HUMAN/SERVICE*** USERNAMES.  { i.e keep 'mysql' as a user (n), but remove hpotter (y) }"
 space
-
-# Find users with UID < MIN_UID
 users_to_remove=$(awk -F':' -v min_uid="$MIN_UID" '{ if ($3 < min_uid) print $1 }' /etc/passwd)
-
 for user in $users_to_remove; do
     if [[ ! " ${SYSTEM_ACCOUNTS[@]} " =~ " ${user} " ]]; then
     	space
         echo  -n "Found possible hidden user: "; yellow "$user"
         space
-        # Prompt for confirmation
         read -p "Do you want to remove this user [y/n] " -n 1 -r
 	space
  	echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            # Remove user
             sudo deluser $user
             if [ $? -eq 0 ]; then
                 echo "Hidden User $user removed successfully."
@@ -206,3 +208,10 @@ for user in $users_to_remove; do
 done
 #-----------------------------------------------------------------------------------------
 
+#Unlock most users, Lock root
+#-----------------------------------------------------------------------------------------
+for i in `cat /home/$CUSER/Desktop/Scripting-main/Scripting-main/users.txt` ; do sudo usermod -U $i; sudo passwd -u $i; echo "Unlocked user " $i; done
+sudo passwd -l root
+#-----------------------------------------------------------------------------------------
+
+###############################################################################################################################
