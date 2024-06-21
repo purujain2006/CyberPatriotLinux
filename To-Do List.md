@@ -10,3 +10,7 @@ Task 3:
 
     - https://docs.google.com/document/d/1w9UkC05RbW-jXfiOG2cYcfr985P_y0EwWqPSMYzuF-E/edit
     - https://docs.google.com/spreadsheets/d/1iUj0OLS8rhPrhwxYzBTi4aITiEjIX4fjvNiiBHyUtCc/edit?gid=1559276436#gid=1559276436
+    
+Task 4:
+
+    - Ownership of application directories, such as FTP servers.
