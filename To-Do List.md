@@ -5,3 +5,7 @@ Task 1:
 Task 2:
 
     - Sort according to CyberPatriot Vulnerability sections and also do constant checks of the CyberPatriot system to check whether/where you lost points/gained them.
+
+Task 3:
+
+    - https://docs.google.com/document/d/1w9UkC05RbW-jXfiOG2cYcfr985P_y0EwWqPSMYzuF-E/edit
