@@ -41,9 +41,11 @@ function CurrentUser(){
 # Remove immutable bits
 
 function RemoveImmutable(){
+
   clear
   echo "Removing immutable bits..."
   sudo chattr -iaR /etc /home /opt /root /var /usr /srv /bin /sbin
+
 }
 
 # Own Root Directories
@@ -275,4 +277,4 @@ FixAdmins()
 PasswordExpiration()
 
 
-#Some functions must come AFTER update.
+#Some functions must come AFTER updates
