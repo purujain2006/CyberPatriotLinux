@@ -278,6 +278,4 @@ PasswordExpiration()
 
 
 # Some functions must come AFTER updates
-# This is kinda cool
-# Testing Edit 1
-# Testing Edit 3
+# This is a comment
