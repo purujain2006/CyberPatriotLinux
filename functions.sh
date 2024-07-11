@@ -114,7 +114,6 @@ function ApplicationUpdate(){
 
 function ReplacePoisonedBinaries(){
   sudo apt update
-  sudo apt install debsums -y
   clear
   red "Deleting any suspicious binaries..."
   space
@@ -254,7 +253,26 @@ function enableFirewall(){
 }
 
 
-# L
+function InstallPackages(){
+  sudo apt install gufw -y
+  sudo apt-mark unhold firefox
+  sudo apt install firefox -y
+  sudo apt install nautilus -y
+  sudo apt install linux-generic -y
+  sudo apt install debsums -y
+  sudo apt install libpam-pwquality -y
+  sudo apt install net-tools -y
+}
+
+function ProhibitedFiles(){
+  mediatypes1=("*.mp3" "*.tgz" "*.mov" "*.mp4" "*.avi" "*.mpg" "*.mpeg" "*.flac" "*.m4a" "*.flv" "*.ogg")
+  mediatypes2=("*.gif" "*.png" "*.jpg" "*.jpeg")
+  for i in ${mediatypes1[@]}; do find / -name $i -type f -delete > /dev/null 2>&1; echo "Deleting $i files"; done
+  for i in ${mediatypes2[@]}; do find /home/ -name $i -type f -delete > /dev/null 2>&1; echo "Deleting $i files"; done
+  for i in ${mediatypes2[@]}; do find /root/ -name $i -type f -delete > /dev/null 2>&1; echo "Deleting $i files"; done
+}
+
+# Linux (permissions, ownership, group settings etc)
 # Apache2/Wordpress
 # MySQL/MariaDB/Postgresql 
 # PHP
@@ -269,6 +287,8 @@ function enableFirewall(){
 # When declaring variables do not forget that it must be a=b and not a = b
 # first is read as assinging a value the second is read as a command
 # MAKE SURE YOU OPEN PORTS FOR CRITICAL SERVICES!!!!!! For example do: sudo ufw allow 22 for SSH
+# Some functions come after updates and instllation
+
 CheckPoisonedConfigFiles(manual)
 ReplacePoisonedBinaries()
 CurrentUser(manual) 
@@ -284,3 +304,5 @@ UnlockUsers()
 LockUsers()
 FixAdmins()
 PasswordExpiration()
+InstallPackages()
+ProhibitedFiles()
