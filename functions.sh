@@ -254,6 +254,15 @@ function enableFirewall(){
 }
 
 
+# L
+# Apache2/Wordpress
+# MySQL/MariaDB/Postgresql 
+# PHP
+
+# Samba
+# FTP (vsftpd, proftpd, pure-ftpd, tnftpd)
+# SSH
+
 
 #fix path directories from scripting-main to cyberpatriotlinux-main
 #Get rid of parenthesis () remember
@@ -275,7 +284,3 @@ UnlockUsers()
 LockUsers()
 FixAdmins()
 PasswordExpiration()
-
-
-# Some functions must come AFTER updates
-# This is a comment
