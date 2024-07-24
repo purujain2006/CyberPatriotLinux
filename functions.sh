@@ -281,6 +281,7 @@ function DeleteBadUsers(){
   grep -E 1[0-9]{3}  /etc/passwd | sed s/:/\ / | awk '{print $1}' > /tmp/allusers
   for i in `grep - Fxvf /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/users.txt /tmp/allusers` ; do sudo userdel -r $i > /dev/null 2>&1; echo "Deleted user " $i; done
 }
+
 # Linux (permissions, ownership, group settings etc)
 # Apache2/Wordpress
 # MySQL/MariaDB/Postgresql 
@@ -289,9 +290,9 @@ function DeleteBadUsers(){
 # Samba
 # FTP (vsftpd, proftpd, pure-ftpd, tnftpd)
 # SSH
+# DNS
 
-
-#fix path directories from scripting-main to cyberpatriotlinux-main
+# fix path directories from scripting-main to cyberpatriotlinux-main
 # Get rid of parenthesis () remember
 # double check manual files --> /etc/passwd /etc/group
 # When declaring variables do not forget that it must be a=b and not a = b
