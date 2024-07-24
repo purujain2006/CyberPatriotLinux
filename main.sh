@@ -22,7 +22,6 @@
 # explanation of alternative code
 
 
-
 # "Example"
 # Additional Comment
 # Additional Comment
@@ -147,7 +146,6 @@ function yellow(){
 }
 #--------------------------#
 
-#Blue
 #--------------------------#
 function blue(){
   printf "\033[34m$1\033[0m"

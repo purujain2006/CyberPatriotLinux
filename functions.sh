@@ -110,6 +110,8 @@ function ApplicationUpdate(){
   clear
 
   su -l $CUSER -c 'gsettings set com.ubuntu.update-notifier regular-auto-launch-interval 0'
+
+  sudo apt update
 }
 
 function ReplacePoisonedBinaries(){
@@ -151,9 +153,9 @@ function ChangePasswords(){
   echo "Done changing passwords..."
 }
 
-#Remove unauthorized users
-function RemoveUnauthorizedUsers(){
-  for user in $(cat /etc/passwd | cut -d ":" -f 1)
+#Remove unauthorized shells
+function RemoveUnauthorizedShells(){
+  for user in $(cat /etc/passwd | cut -d ":" -f1)
 	  do
 		  if [ $(id -u $user) -lt 1000 ]
 		  then
@@ -223,7 +225,7 @@ function FixAdmins(){
   red "Changing admins..."
   space
   #for loop to read all usernames
-  for i in `cat /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/users.txt` ; do sudo gpasswd -d $i sudo > /dev/null 2>&1 ; sudo gpasswd -d $i adm  > /dev/null 2>&1 ; echo "Removed " $i " as an admin"; done
+  for i in `cat /etc/passwd | cut -d ":" -f1` ; do sudo gpasswd -d $i sudo > /dev/null 2>&1 ; sudo gpasswd -d $i adm  > /dev/null 2>&1 ; echo "Removed " $i " as an admin"; done
   for i in `cat /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/admins.txt` ; do sudo gpasswd -a $i sudo > /dev/null 2>&1 ; sudo gpasswd -a $i adm > /dev/null 2>&1; echo "Added " $i " as an admin"; done
   space
   echo "Done changing admins "
@@ -254,6 +256,9 @@ function enableFirewall(){
 
 
 function InstallPackages(){
+  sudo apt install unattended-upgrades -y
+  sudo apt install apt -y
+  sudo apt install ufw -y
   sudo apt install gufw -y
   sudo apt-mark unhold firefox
   sudo apt install firefox -y
@@ -272,6 +277,10 @@ function ProhibitedFiles(){
   for i in ${mediatypes2[@]}; do find /root/ -name $i -type f -delete > /dev/null 2>&1; echo "Deleting $i files"; done
 }
 
+function DeleteBadUsers(){
+  grep -E 1[0-9]{3}  /etc/passwd | sed s/:/\ / | awk '{print $1}' > /tmp/allusers
+  for i in `grep - Fxvf /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/users.txt /tmp/allusers` ; do sudo userdel -r $i > /dev/null 2>&1; echo "Deleted user " $i; done
+}
 # Linux (permissions, ownership, group settings etc)
 # Apache2/Wordpress
 # MySQL/MariaDB/Postgresql 
@@ -283,11 +292,17 @@ function ProhibitedFiles(){
 
 
 #fix path directories from scripting-main to cyberpatriotlinux-main
-#Get rid of parenthesis () remember
+# Get rid of parenthesis () remember
+# double check manual files --> /etc/passwd /etc/group
 # When declaring variables do not forget that it must be a=b and not a = b
 # first is read as assinging a value the second is read as a command
 # MAKE SURE YOU OPEN PORTS FOR CRITICAL SERVICES!!!!!! For example do: sudo ufw allow 22 for SSH
 # Some functions come after updates and instllation
+# Install critical services
+# append & to the functions that don't have update dependencies/aren't manual
+# doulbe check pwquality in InstallPackages()
+# EnableFirewall() needs the critical service
+# check /etc/rc.#.d/ for services that are running on startup.
 
 CheckPoisonedConfigFiles(manual)
 ReplacePoisonedBinaries()
@@ -297,7 +312,7 @@ RootOwn()
 ApplicationUpdate()
 AddNewUsers()
 ChangePasswords()
-RemoveUnauthorizedUsers()
+RemoveUnauthorizedShells()
 DeleteHiddenUsersAuto()
 CheckHiddenUsers(manual)
 UnlockUsers()
@@ -306,3 +321,4 @@ FixAdmins()
 PasswordExpiration()
 InstallPackages()
 ProhibitedFiles()
+DeleteBadUsers()
