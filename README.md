@@ -1,6 +1,6 @@
-Add all authorized users except your own into /home/$CUSER/Desktop/Scripting-main/Scripting-main/users.txt
+Add all authorized users INCLUDING your own into /home/$CUSER/Desktop/Scripting-main/Scripting-main/users.txt
 
-Add all authorized ADMINS except your own into /home/$CUSER/Desktop/Scripting-main/Scripting-main/admins.txt
+Add all authorized ADMINS INCLUDING your own into /home/$CUSER/Desktop/Scripting-main/Scripting-main/admins.txt
 
 Add all users that need to be created to /home/$CUSER/Desktop/Scripting-main/Scripting-main/newusers.txt
 
