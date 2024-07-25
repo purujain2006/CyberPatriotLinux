@@ -304,6 +304,7 @@ function DeleteBadUsers(){
 # doulbe check pwquality in InstallPackages()
 # EnableFirewall() needs the critical service
 # check /etc/rc.#.d/ for services that are running on startup.
+# check disown after & to untie to terminal
 
 CheckPoisonedConfigFiles(manual)
 ReplacePoisonedBinaries()
