@@ -29,7 +29,6 @@ function dblue(){
   printf "\033[36m$1\033[0m"
 }
 
-
 function CurrentUser(){
   space
   yellow "Current working directory is" ; pwd
@@ -39,7 +38,6 @@ function CurrentUser(){
 }
 
 # Remove immutable bits
-
 function RemoveImmutable(){
 
   clear
@@ -50,7 +48,6 @@ function RemoveImmutable(){
 
 # Own Root Directories
 # Ownership of application directories
-
 function SystemOwnership(){
 
     cd /; for i in `ls -a`; do sudo chown root:root $i; done
@@ -72,7 +69,6 @@ function SystemOwnership(){
 
 }
 
-
 # Fix ownership of application directories
 # ftp is 555 permissions
 function AppOwnership(manual){
@@ -84,7 +80,6 @@ function AppOwnership(manual){
 }
 
 # Application Updates
-
 function ApplicationUpdate(){
   echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -c | awk '{print $2}') main restricted universe multiverse" > /etc/apt/sources.list
   echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -c | awk '{print $2}')-security main restricted universe multiverse" >> /etc/apt/sources.list
@@ -130,6 +125,7 @@ function CheckPoisonedConfigFiles(manual){
   $(sudo debsums -e | grep -v OK | awk {'print $1'})
 
 }
+
 # Add new users
 function AddNewUsers(){
   space
@@ -153,7 +149,7 @@ function ChangePasswords(){
   echo "Done changing passwords..."
 }
 
-#Remove unauthorized shells
+# Remove unauthorized shells
 function RemoveUnauthorizedShells(){
   for user in $(cat /etc/passwd | cut -d ":" -f1)
 	  do
@@ -209,12 +205,12 @@ function DeleteHiddenUsersAuto(){
   for i in $hidden; do sudo userdel $i; done
 }
 
-#Unlock User Accounts
+# Unlock User Accounts
 function UnlockUsers(){
   for i in `cat /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/users.txt` ; do sudo usermod -U $i; sudo passwd -u $i; echo "Unlocked user " $i; done
 }
 
-#Lock User Accounts
+# Lock User Accounts
 function LockUsers(){
   for user in $system_users ; do sudo passwd -l $user; echo "Locked system user " $user; done
   sudo passwd -l root
@@ -243,7 +239,6 @@ function ZeroUIDUsers(){
   for i in `egrep ':x:[0-9]*:0:' /etc/passwd | grep -v root | cut -d : -f1`; do newGID = $((newGID++)); groupmod -g $newGID $i; done
 }
 
-
 function enableFirewall(){
   sudo ufw reset
   sudo ufw enable
@@ -253,7 +248,6 @@ function enableFirewall(){
   sudo ufw allow out 80
   sudo ufw allow out 443
 }
-
 
 function InstallPackages(){
   sudo apt install unattended-upgrades -y
@@ -282,29 +276,31 @@ function DeleteBadUsers(){
   for i in `grep - Fxvf /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/users.txt /tmp/allusers` ; do sudo userdel -r $i > /dev/null 2>&1; echo "Deleted user " $i; done
 }
 
-# Linux (permissions, ownership, group settings etc)
-# Apache2/Wordpress
-# MySQL/MariaDB/Postgresql 
-# PHP
+function Comments(){
+  # Linux (permissions, ownership, group settings etc)
+  # Apache2/Wordpress
+  # MySQL/MariaDB/Postgresql 
+  # PHP
 
-# Samba
-# FTP (vsftpd, proftpd, pure-ftpd, tnftpd)
-# SSH
-# DNS
+  # Samba
+  # FTP (vsftpd, proftpd, pure-ftpd, tnftpd)
+  # SSH
+  # DNS
 
-# fix path directories from scripting-main to cyberpatriotlinux-main
-# Get rid of parenthesis () remember
-# double check manual files --> /etc/passwd /etc/group
-# When declaring variables do not forget that it must be a=b and not a = b
-# first is read as assinging a value the second is read as a command
-# MAKE SURE YOU OPEN PORTS FOR CRITICAL SERVICES!!!!!! For example do: sudo ufw allow 22 for SSH
-# Some functions come after updates and instllation
-# Install critical services
-# append & to the functions that don't have update dependencies/aren't manual
-# doulbe check pwquality in InstallPackages()
-# EnableFirewall() needs the critical service
-# check /etc/rc.#.d/ for services that are running on startup.
-# check disown after & to untie to terminal
+  # fix path directories from scripting-main to cyberpatriotlinux-main
+  # Get rid of parenthesis () remember
+  # double check manual files --> /etc/passwd /etc/group
+  # When declaring variables do not forget that it must be a=b and not a = b
+  # first is read as assinging a value the second is read as a command
+  # MAKE SURE YOU OPEN PORTS FOR CRITICAL SERVICES!!!!!! For example do: sudo ufw allow 22 for SSH
+  # Some functions come after updates and instllation
+  # Install critical services
+  # append & to the functions that don't have update dependencies/aren't manual
+  # doulbe check pwquality in InstallPackages()
+  # EnableFirewall() needs the critical service
+  # check /etc/rc.#.d/ for services that are running on startup.
+  # check disown after & to untie to terminal
+}
 
 CheckPoisonedConfigFiles(manual)
 ReplacePoisonedBinaries()
