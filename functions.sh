@@ -272,6 +272,52 @@ function DeleteBadUsers(){
   for i in `grep - Fxvf $SCRIPTDIR/Inputs/users.txt /tmp/allusers` ; do sudo userdel -r $i > /dev/null 2>&1; echo "Deleted user " $i; done
 }
 
+
+function BadPackages(manual){
+
+  # All default gnome games
+  sudo apt purge iagno lightsoff four-in-a-row gnome-robots pegsolitaire gnome-2048 hitori gnome-klotski gnome-mines gnome-mahjongg gnome-sudoku quadrapassel swell-foop gnome-tetravex gnome-taquin aisleriot gnome-chess five-or-more gnome-nibbles tali -y > /dev/null 2>&1 ; sudo apt autoremove -y > /dev/null 2>&1
+  space
+  red "The following can be bad packages. Double check and remove:"
+  space
+
+  # Mark telnet remmina netcat ftp openssh-client openvpn snapd as bad packages that are installed by default
+  # Establish base and current packages
+  GET $(cat $SCRIPTDIR/InfoFiles/manifests.txt | grep $(lsb_release -c | awk '{print $2}') | awk '{print $2}') | awk '{print $1}' | grep -v telnet | grep -v remmina | grep -v netcat | grep -v ftp | grep -v openssh | grep -v openvpn | grep -v snapd > $SCRIPTDIR/SideProductFiles/BadPackageCheck/basepackages
+  dpkg-query -l | tail -n+4 | awk '{print $2}' > $SCRIPTDIR/SideProductFiles/BadPackageCheck/currentpackages
+
+  grep -Fxvf $SCRIPTDIR/SideProductFiles/BadPackageCheck/basepackages $SCRIPTDIR/SideProductFiles/BadPackageCheck/currentpackages | grep -v lib | grep -v python | grep -v gir |grep -v unity | grep -v fonts | grep -v gnome | grep -vF "linux-"| grep -v indicator | grep -v qml | grep -v signon | grep -v qt | grep -vF "ubuntu-" | grep -vF "account-" | grep -v conf | grep -v openssh | grep -v apache2 | grep -v samba | grep -v imagemagick | grep -v GNU | grep -v OpenGl > $SCRIPTDIR/SideProductFiles/BadPackageCheck/differentpackages
+  for i in `cat $SCRIPTDIR/SideProductFiles/BadPackageCheck/differentpackages`; do dpkg -l | grep -wF $i >> $SCRIPTDIR/SideProductFiles/BadPackageCheck/DifferentPackagesInfo; done
+  cat $SCRIPTDIR/SideProductFiles/BadPackageCheck/DifferentPackagesInfo | grep -v lib >  $SCRIPTDIR/SideProductFiles/BadPackageCheck/removeduplicates.txt; sleep 3s; awk '!a[$0]++' $SCRIPTDIR/SideProductFiles/BadPackageCheck/removeduplicates.txt >  $SCRIPTDIR/SideProductFiles/BadPackageCheck/FinalListofDifferentPackages
+  cat  $SCRIPTDIR/SideProductFiles/BadPackageCheck/FinalListofDifferentPackages
+
+  space
+  yellow "Type yes once you are done with MANUALLY INSPECTING packages"
+  space
+  read e
+
+}
+
+
+function SSHKeyGen(){
+  sudo apt -y install expect
+  cd /
+  mkdir /home/$(echo $SCRIPTDIR | cut -d / -f3)/.ssh
+  expect -c "
+  spawn ssh-keygen
+  expect \"Enter file in which to save the key\"
+  send \"/home/$(echo $SCRIPTDIR | cut -d / -f3)/.ssh/id_rsa\r\"
+  expect \"Enter passphrase\"
+  send \"j@Hn\r\"
+  expect \"Enter same passphrase again\"
+  send \"j@Hn\r\"
+  expect eof
+  "
+  chmod 600 /home/$(echo $SCRIPTDIR | cut -d / -f3)/.ssh/id_rsa
+  chmod 640 /home/$(echo $SCRIPTDIR | cut -d / -f3)/.ssh/id_rsa.pub
+}
+
+
 function Comments(){
   # Linux (permissions, ownership, group settings etc)
   # Apache2/Wordpress
@@ -296,30 +342,9 @@ function Comments(){
   # EnableFirewall() needs the critical service
   # check /etc/rc.#.d/ for services that are running on startup.
   # check disown after & to untie to terminal
-}
-
-function BadPackages(manual){
-
-  # All default gnome games
-  sudo apt purge iagno lightsoff four-in-a-row gnome-robots pegsolitaire gnome-2048 hitori gnome-klotski gnome-mines gnome-mahjongg gnome-sudoku quadrapassel swell-foop gnome-tetravex gnome-taquin aisleriot gnome-chess five-or-more gnome-nibbles tali -y > /dev/null 2>&1 ; sudo apt autoremove -y > /dev/null 2>&1
-  space
-  red "The following can be bad packages. Double check and remove:"
-  space
-
-  # Mark telnet remmina netcat ftp openssh-client openvpn snapd as bad packages that are installed by default
-  # Establish base and current packages
-  GET $(cat $SCRIPTDIR/InfoFiles/manifests.txt | grep $(lsb_release -c | awk '{print $2}') | awk '{print $2}') | awk '{print $1}' | grep -v telnet | grep -v remmina | grep -v netcat | grep -v ftp | grep -v openssh | grep -v openvpn | grep -v snapd > $SCRIPTDIR/SideProductFiles/BadPackageCheck/basepackages
-  dpkg-query -l | tail -n+4 | awk '{print $2}' > $SCRIPTDIR/SideProductFiles/BadPackageCheck/currentpackages
-
-  grep -Fxvf $SCRIPTDIR/SideProductFiles/BadPackageCheck/basepackages $SCRIPTDIR/SideProductFiles/BadPackageCheck/currentpackages | grep -v lib | grep -v python | grep -v gir |grep -v unity | grep -v fonts | grep -v gnome | grep -vF "linux-"| grep -v indicator | grep -v qml | grep -v signon | grep -v qt | grep -vF "ubuntu-" | grep -vF "account-" | grep -v conf | grep -v openssh | grep -v apache2 | grep -v samba | grep -v imagemagick | grep -v GNU | grep -v OpenGl > $SCRIPTDIR/SideProductFiles/BadPackageCheck/differentpackages
-  for i in `cat $SCRIPTDIR/SideProductFiles/BadPackageCheck/differentpackages`; do dpkg -l | grep -wF $i >> $SCRIPTDIR/SideProductFiles/BadPackageCheck/DifferentPackagesInfo; done
-  cat $SCRIPTDIR/SideProductFiles/BadPackageCheck/DifferentPackagesInfo | grep -v lib >  $SCRIPTDIR/SideProductFiles/BadPackageCheck/removeduplicates.txt; sleep 3s; awk '!a[$0]++' $SCRIPTDIR/SideProductFiles/BadPackageCheck/removeduplicates.txt >  $SCRIPTDIR/SideProductFiles/BadPackageCheck/FinalListofDifferentPackages
-  cat  $SCRIPTDIR/SideProductFiles/BadPackageCheck/FinalListofDifferentPackages
-
-  space
-  yellow "Type yes once you are done with MANUALLY INSPECTING packages"
-  space
-  read e
+  # remove echo statements from background non manual functions
+  # kernel things moduels etc.
+  
 
 }
 
