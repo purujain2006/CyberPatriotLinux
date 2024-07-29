@@ -307,7 +307,14 @@ function BadPackages(manual){
   space
 
   # Mark telnet remmina netcat ftp openssh-client openvpn snapd as bad packages that are installed by default
-  GET $(cat $SCRIPTDIR/InfoFiles/manifests.txt | grep $(lsb_release -c | awk '{print $2}') | awk '{print $2}') | awk '{print $1}' | grep -v telnet | grep -v remmina | grep -v netcat | grep -v ftp | grep -v openssh | grep -v openvpn | grep -v snapd 
+  # Establish base and current packages
+  GET $(cat $SCRIPTDIR/InfoFiles/manifests.txt | grep $(lsb_release -c | awk '{print $2}') | awk '{print $2}') | awk '{print $1}' | grep -v telnet | grep -v remmina | grep -v netcat | grep -v ftp | grep -v openssh | grep -v openvpn | grep -v snapd > $SCRIPTDIR/SideProductFiles/BadPackageCheck/basepackages
+  dpkg-query -l | tail -n+4 | awk '{print $2}' > $SCRIPTDIR/SideProductFiles/BadPackageCheck/currentpackages
+
+  grep -Fxvf $SCRIPTDIR/SideProductFiles/BadPackageCheck/basepackages $SCRIPTDIR/SideProductFiles/BadPackageCheck/currentpackages | grep -v lib | grep -v python | grep -v gir |grep -v unity | grep -v fonts | grep -v gnome | grep -vF "linux-"| grep -v indicator | grep -v qml | grep -v signon | grep -v qt | grep -vF "ubuntu-" | grep -vF "account-" | grep -v conf | grep -v openssh | grep -v apache2 | grep -v samba | grep -v imagemagick | grep -v GNU | grep -v OpenGl > $SCRIPTDIR/SideProductFiles/BadPackageCheck/differentpackages
+  for i in `cat $SCRIPTDIR/SideProductFiles/BadPackageCheck/differentpackages`; do dpkg -l | grep -wF $i >> $SCRIPTDIR/SideProductFiles/BadPackageCheck/DifferentPackagesInfo; done
+  cat $SCRIPTDIR/SideProductFiles/BadPackageCheck/DifferentPackagesInfo | grep -v lib >  $SCRIPTDIR/SideProductFiles/BadPackageCheck/removeduplicates.txt; sleep 3s; awk '!a[$0]++' $SCRIPTDIR/SideProductFiles/BadPackageCheck/removeduplicates.txt >  $SCRIPTDIR/SideProductFiles/BadPackageCheck/FinalListofDifferentPackages
+  cat  $SCRIPTDIR/SideProductFiles/BadPackageCheck/FinalListofDifferentPackages
 
 }
 
