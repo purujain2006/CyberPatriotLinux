@@ -29,12 +29,8 @@ function dblue(){
   printf "\033[36m$1\033[0m"
 }
 
-function CurrentUser(){
-  space
-  yellow "Current working directory is" ; pwd
-  space
-  blue "What is the name of the user you are currently using? (ex: john if /home/john/Desktop/..."
-  read CUSER
+function ScriptDirectory(){
+  SCRIPTDIR=$(realpath $(dirname $0))
 }
 
 # Remove immutable bits
@@ -104,7 +100,7 @@ function ApplicationUpdate(){
   sudo apt-get install dbus-x11
   clear
 
-  su -l $CUSER -c 'gsettings set com.ubuntu.update-notifier regular-auto-launch-interval 0'
+  su -l $(echo $SCRIPTDIR | cut -d / -f3) -c 'gsettings set com.ubuntu.update-notifier regular-auto-launch-interval 0'
 
   sudo apt update
 }
@@ -131,7 +127,7 @@ function AddNewUsers(){
   space
   echo "Adding new users.. with password: dq*eb5,69~n)_-JU<&V8 "
   space
-  for i in `cat /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/newusers.txt` ; do sudo useradd $i > /dev/null 2>&1 ; echo $i >> /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/users.txt; echo "Added new user " $i ; done
+  for i in `cat $SCRIPTDIR/Inputs/newusers.txt` ; do sudo useradd $i > /dev/null 2>&1 ; echo $i >> $SCRIPTDIR/Inputs/users.txt; echo "Added new user " $i ; done
   echo "Done adding users."
   space
 }
@@ -142,7 +138,7 @@ function ChangePasswords(){
   red "Changing passwords..."
   space
   space
-  for i in `cat /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/users.txt` ; do echo $i:"dq*eb5,69~n)_-JU<&V8" | sudo chpasswd ;  echo "Done changing password for: " $i " ...";  done
+  for i in `cat $SCRIPTDIR/Inputs/users.txt` ; do echo $i:"dq*eb5,69~n)_-JU<&V8" | sudo chpasswd ;  echo "Done changing password for: " $i " ...";  done
   echo "root:dq*eb5,69~n)_-JU<&V8" | sudo chpasswd; echo "Done changing password for: root..."
   space
   space
@@ -207,7 +203,7 @@ function DeleteHiddenUsersAuto(){
 
 # Unlock User Accounts
 function UnlockUsers(){
-  for i in `cat /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/users.txt` ; do sudo usermod -U $i; sudo passwd -u $i; echo "Unlocked user " $i; done
+  for i in `cat $SCRIPTDIR/Inputs/users.txt` ; do sudo usermod -U $i; sudo passwd -u $i; echo "Unlocked user " $i; done
 }
 
 # Lock User Accounts
@@ -222,13 +218,13 @@ function FixAdmins(){
   space
   #for loop to read all usernames
   for i in `cat /etc/passwd | cut -d ":" -f1` ; do sudo gpasswd -d $i sudo > /dev/null 2>&1 ; sudo gpasswd -d $i adm  > /dev/null 2>&1 ; echo "Removed " $i " as an admin"; done
-  for i in `cat /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/admins.txt` ; do sudo gpasswd -a $i sudo > /dev/null 2>&1 ; sudo gpasswd -a $i adm > /dev/null 2>&1; echo "Added " $i " as an admin"; done
+  for i in `cat $SCRIPTDIR/Inputs/admins.txt` ; do sudo gpasswd -a $i sudo > /dev/null 2>&1 ; sudo gpasswd -a $i adm > /dev/null 2>&1; echo "Added " $i " as an admin"; done
   space
   echo "Done changing admins "
 }
 
 function PasswordExpiration(){
-  for line in `cat /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/users.txt` ; do chage -M 15 -m 6 -W 7 -I 5 $line; done
+  for line in `cat $SCRIPTDIR/Inputs/users.txt` ; do chage -M 15 -m 6 -W 7 -I 5 $line; done
 }
 
 function ZeroUIDUsers(){
@@ -273,7 +269,7 @@ function ProhibitedFiles(){
 
 function DeleteBadUsers(){
   grep -E 1[0-9]{3}  /etc/passwd | sed s/:/\ / | awk '{print $1}' > /tmp/allusers
-  for i in `grep - Fxvf /home/$CUSER/Desktop/CyberPatriotLinux-main/Inputs/users.txt /tmp/allusers` ; do sudo userdel -r $i > /dev/null 2>&1; echo "Deleted user " $i; done
+  for i in `grep - Fxvf $SCRIPTDIR/Inputs/users.txt /tmp/allusers` ; do sudo userdel -r $i > /dev/null 2>&1; echo "Deleted user " $i; done
 }
 
 function Comments(){
@@ -300,7 +296,6 @@ function Comments(){
   # EnableFirewall() needs the critical service
   # check /etc/rc.#.d/ for services that are running on startup.
   # check disown after & to untie to terminal
-  # Instead of $CUSER use $(pwd)? and set $SCRIPTDIR to /home/$CUSER/Desktop/CyberPatriotLinux-main
 }
 
 function BadPackages(manual){
@@ -311,15 +306,15 @@ function BadPackages(manual){
   red "The following can be bad packages. Double check and remove:"
   space
 
-  # telnet remmina netcat ftp openssh-client openvpn snapd
-  GET $(cat /home/$CUSER/Desktop/CyberPatriotLinux-main/InfoFiles/manifests.txt | grep $(lsb_release -c | awk '{print $2}') | awk '{print $2}') | awk '{print $1}' | grep -v telnet | grep -v remmina | grep -v netcat | grep -v ftp | grep -v openssh | grep -v openvpn | grep -v snapd 
+  # Mark telnet remmina netcat ftp openssh-client openvpn snapd as bad packages that are installed by default
+  GET $(cat $SCRIPTDIR/InfoFiles/manifests.txt | grep $(lsb_release -c | awk '{print $2}') | awk '{print $2}') | awk '{print $1}' | grep -v telnet | grep -v remmina | grep -v netcat | grep -v ftp | grep -v openssh | grep -v openvpn | grep -v snapd 
 
 }
 
-
+#first
+ScriptDirectory()
 CheckPoisonedConfigFiles(manual)
 ReplacePoisonedBinaries()
-CurrentUser(manual) 
 RemoveImmutable()
 RootOwn()
 ApplicationUpdate()
