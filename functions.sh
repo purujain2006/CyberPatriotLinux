@@ -302,6 +302,13 @@ function Comments(){
   # check disown after & to untie to terminal
 }
 
+function BadPackages(manual){
+  space
+  red "The following can be bad packages. Double check and remove:"
+  space
+  GET $(cat /home/$CUSER/CyberPatriotLinux-main/InfoFiles/manifests.txt | grep $(lsb_release -c | awk '{print $2}') | awk '{print $2}') | awk '{print $1}'
+
+}
 
 
 CheckPoisonedConfigFiles(manual)

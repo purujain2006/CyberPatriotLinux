@@ -1,7 +1,7 @@
 jammy https://releases.ubuntu.com/jammy/ubuntu-22.04.4-desktop-amd64.manifest
-xenial https://releases.ubuntu.com/xenial/ubuntu-16.04.7-server-amd64.manifest
+xenial https://releases.ubuntu.com/xenial/ubuntu-16.04.7-desktop-amd64.manifest
 bionic https://releases.ubuntu.com/bionic/ubuntu-18.04.6-desktop-amd64.manifest
 focal https://releases.ubuntu.com/focal/ubuntu-20.04.6-desktop-amd64.manifest
 noble https://releases.ubuntu.com/noble/ubuntu-24.04-desktop-amd64.manifest
-mantic https://releases.ubuntu.com/mantic/ubuntu-23.10-live-server-amd64.manifest
+mantic https://releases.ubuntu.com/mantic/ubuntu-23.10.1-desktop-amd64.manifest
 trusty https://releases.ubuntu.com/trusty/ubuntu-14.04.6-desktop-amd64.manifest
