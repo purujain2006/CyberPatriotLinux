@@ -1,3 +1,6 @@
+// Add for future versions by using the following format:
+// [codename of dist] [link to amd64 manifest available on releases.ubuntu.com]
+
 jammy https://releases.ubuntu.com/jammy/ubuntu-22.04.4-desktop-amd64.manifest
 xenial https://releases.ubuntu.com/xenial/ubuntu-16.04.7-desktop-amd64.manifest
 bionic https://releases.ubuntu.com/bionic/ubuntu-18.04.6-desktop-amd64.manifest
