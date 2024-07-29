@@ -296,11 +296,13 @@ function Comments(){
   # Some functions come after updates and instllation
   # Install critical services
   # append & to the functions that don't have update dependencies/aren't manual
-  # doulbe check pwquality in InstallPackages()
+  # double check pwquality in InstallPackages()
   # EnableFirewall() needs the critical service
   # check /etc/rc.#.d/ for services that are running on startup.
   # check disown after & to untie to terminal
 }
+
+
 
 CheckPoisonedConfigFiles(manual)
 ReplacePoisonedBinaries()
