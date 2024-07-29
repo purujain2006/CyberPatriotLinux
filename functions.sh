@@ -287,7 +287,7 @@ function Comments(){
   # SSH
   # DNS
 
-  # fix path directories from scripting-main to cyberpatriotlinux-main
+  # fix path directories from scripting-main to DESKTOP/cyberpatriotlinux-main
   # Get rid of parenthesis () remember
   # double check manual files --> /etc/passwd /etc/group
   # When declaring variables do not forget that it must be a=b and not a = b
@@ -300,13 +300,19 @@ function Comments(){
   # EnableFirewall() needs the critical service
   # check /etc/rc.#.d/ for services that are running on startup.
   # check disown after & to untie to terminal
+  # Instead of $CUSER use $(pwd)? and set $SCRIPTDIR to /home/$CUSER/Desktop/CyberPatriotLinux-main
 }
 
 function BadPackages(manual){
+
+  # All default gnome games
+  sudo apt purge iagno lightsoff four-in-a-row gnome-robots pegsolitaire gnome-2048 hitori gnome-klotski gnome-mines gnome-mahjongg gnome-sudoku quadrapassel swell-foop gnome-tetravex gnome-taquin aisleriot gnome-chess five-or-more gnome-nibbles tali -y > /dev/null 2>&1 ; sudo apt autoremove -y > /dev/null 2>&1
   space
   red "The following can be bad packages. Double check and remove:"
   space
-  GET $(cat /home/$CUSER/CyberPatriotLinux-main/InfoFiles/manifests.txt | grep $(lsb_release -c | awk '{print $2}') | awk '{print $2}') | awk '{print $1}'
+
+  # telnet remmina netcat ftp openssh-client openvpn snapd
+  GET $(cat /home/$CUSER/Desktop/CyberPatriotLinux-main/InfoFiles/manifests.txt | grep $(lsb_release -c | awk '{print $2}') | awk '{print $2}') | awk '{print $1}' | grep -v telnet | grep -v remmina | grep -v netcat | grep -v ftp | grep -v openssh | grep -v openvpn | grep -v snapd 
 
 }
 
