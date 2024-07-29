@@ -316,6 +316,11 @@ function BadPackages(manual){
   cat $SCRIPTDIR/SideProductFiles/BadPackageCheck/DifferentPackagesInfo | grep -v lib >  $SCRIPTDIR/SideProductFiles/BadPackageCheck/removeduplicates.txt; sleep 3s; awk '!a[$0]++' $SCRIPTDIR/SideProductFiles/BadPackageCheck/removeduplicates.txt >  $SCRIPTDIR/SideProductFiles/BadPackageCheck/FinalListofDifferentPackages
   cat  $SCRIPTDIR/SideProductFiles/BadPackageCheck/FinalListofDifferentPackages
 
+  space
+  yellow "Type yes once you are done with MANUALLY INSPECTING packages"
+  space
+  read e
+
 }
 
 #first
@@ -337,3 +342,4 @@ PasswordExpiration()
 InstallPackages()
 ProhibitedFiles()
 DeleteBadUsers()
+BadPackages(manual)
