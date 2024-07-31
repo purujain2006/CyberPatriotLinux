@@ -9,14 +9,21 @@ Put critical services in /home/$CUSER/Desktop/Scripting-main/Scripting-main/crit
   Only list critical services as follows (case and spelling sensitive):
       
           - apache2
-          - mysql
+          - mysql-server
           - ssh
+          - postgresql
+          - php
+          - phpmyadmin
+          - wordpress
+          - mariadb
+          - openvpn
           - samba
           - vsftpd
           - proftpd
-          - ncftp
-          - tnftp
-          - tftp
+          - pure-ftpd
+          - tnftpd
+          - openssh-server
+          - bind9
 
   Everything this Script does: 
   

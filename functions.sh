@@ -318,7 +318,22 @@ function SSHKeyGen(){
 }
 
 
+function CriticalServicePackages(){
+  sudo apt update
+  SERVICES=()
+  for i in `cat $SCRIPTDIR/Inputs/criticalservices.txt`; do sudo apt install $i -y; SERVICES+=($i); done
+  # needs modification. maybe use an associative array to interchange between system and service names?
+  for i in ${SERVICES[@]}; do sudo systemctl enable $i; sudo systemctl start $i; done
+}
+
+
 function Comments(){
+  # explain xargs
+  # perl might be malware double check.
+  # check that one services folder thats not in service --status-all
+  # /sys/fs/cgroup/unified/system.slice/
+  # /sys/systemd/system
+  # grub mkpdf etc.
   # Linux (permissions, ownership, group settings etc)
   # Apache2/Wordpress
   # MySQL/MariaDB/Postgresql 
