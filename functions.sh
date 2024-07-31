@@ -317,7 +317,6 @@ function SSHKeyGen(){
   chmod 640 /home/$(echo $SCRIPTDIR | cut -d / -f3)/.ssh/id_rsa.pub
 }
 
-
 function CriticalServicePackages(){
   sudo apt update
   SERVICES=()
