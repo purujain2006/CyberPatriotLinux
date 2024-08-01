@@ -323,6 +323,7 @@ function CriticalServicePackages(){
   service2systemctl=(["apache2"]="apache2" ["mysql-server"]="mysql" ["samba"]="smbd" ["vsftpd"]="vsftpd" ["proftpd"]="proftpd" ["pure-ftpd"]="pure-ftpd" ["tnftpd"]="tnftpd" ["ssh"]="ssh" ["bind9"]="bind9")
   SERVICES=()
   for i in `cat $SCRIPTDIR/Inputs/criticalservices.txt`; do sudo apt install $i -y > /dev/null 2>&1; SERVICES+=($i); done
+  sleep 6
   # smbd service is not found error?
   for i in ${SERVICES[@]}; do sudo systemctl enable ${service2systemctl[$i]} > /dev/null 2>&1; sudo systemctl start ${service2systemctl[$i]} > /dev/null 2>&1; sudo ufw allow ${service2systemctl[$i]} > /dev/null 2>&1; done
   for i in ${!service2systemctl[@]}
