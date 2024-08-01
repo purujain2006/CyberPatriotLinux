@@ -319,15 +319,23 @@ function SSHKeyGen(){
 
 function CriticalServicePackages(){
   sudo apt update
+  declare -A service2systemctl
+  service2systemctl=(["apache2"]="apache2" ["mysql-server"]="mysql" ["samba"]="smbd" ["vsftpd"]="vsftpd" ["proftpd"]="proftpd" ["pure-ftpd"]="pure-ftpd" ["tnftpd"]="tnftpd" ["ssh"]="ssh" ["bind9"]="bind9")
   SERVICES=()
-  for i in `cat $SCRIPTDIR/Inputs/criticalservices.txt`; do sudo apt install $i -y; SERVICES+=($i); done
-  # needs modification. maybe use an associative array to interchange between system and service names?
-  for i in ${SERVICES[@]}; do sudo systemctl enable $i; sudo systemctl start $i; done
+  for i in `cat $SCRIPTDIR/Inputs/criticalservices.txt`; do sudo apt install $i -y > /dev/null 2>&1; SERVICES+=($i); done
+  # smbd service is not found error?
+  for i in ${SERVICES[@]}; do sudo systemctl enable ${service2systemctl[$i]} > /dev/null 2>&1; sudo systemctl start ${service2systemctl[$i]} > /dev/null 2>&1; sudo ufw allow ${service2systemctl[$i]} > /dev/null 2>&1; done
+  for i in ${!service2systemctl[@]}
+    do
+      if [[ ! " $(cat $SCRIPTDIR/Inputs/critcalservices.txt) " =~ " $i " ]]; then
+          sudo apt remove --purge $i -y > /dev/null 2>&1
+    done
 }
 
 
 function Comments(){
   # explain xargs
+  # maybe log errors to a file like "package apache not found" etc.
   # perl might be malware double check.
   # check that one services folder thats not in service --status-all
   # /sys/fs/cgroup/unified/system.slice/
