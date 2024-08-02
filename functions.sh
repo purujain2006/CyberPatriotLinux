@@ -31,6 +31,7 @@ function dblue(){
 
 function ScriptDirectory(){
   SCRIPTDIR=$(realpath $(dirname $0))
+  noGUI="DEBIAN_FRONTEND=noninteractive"
 }
 
 # Remove immutable bits
@@ -81,7 +82,7 @@ function ApplicationUpdate(){
   echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -c | awk '{print $2}')-security main restricted universe multiverse" >> /etc/apt/sources.list
   echo "deb http://security.ubuntu.com/ubuntu/ $(lsb_release -c | awk '{print $2}')-security main restricted universe multiverse" >> /etc/apt/sources.list
   echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -c | awk '{print $2}')-updates main universe restricted multiverse" >> /etc/apt/sources.lists
-  sudo apt update
+  sudo $noGUI apt update
 
   echo """
   APT::Periodic::Update-Package-Lists "1";
@@ -97,21 +98,21 @@ function ApplicationUpdate(){
   APT::Periodic::Unattended-Upgrade "1";
   """ > /etc/apt/apt.conf.d/20auto-upgrades
 
-  sudo apt-get install dbus-x11
+  sudo $noGUI apt install dbus-x11
   clear
 
   su -l $(echo $SCRIPTDIR | cut -d / -f3) -c 'gsettings set com.ubuntu.update-notifier regular-auto-launch-interval 0'
 
-  sudo apt update
+  sudo $noGUI apt update
 }
 
 function ReplacePoisonedBinaries(){
-  sudo apt update
+  sudo $noGUI apt update
   clear
   red "Deleting any suspicious binaries..."
   space
   sudo debsums -c > /tmp/debsums 2>&1
-  for i in `cat /tmp/debsums | grep -v missing`; do sudo apt-get install --reinstall $(sudo dpkg -S $i | cut -d : -f1); done
+  for i in `cat /tmp/debsums | grep -v missing`; do sudo $noGUI apt install --reinstall $(sudo dpkg -S $i | cut -d : -f1); done
   echo "Done."
 }
 
@@ -246,17 +247,18 @@ function enableFirewall(){
 }
 
 function InstallPackages(){
-  sudo apt install unattended-upgrades -y
-  sudo apt install apt -y
-  sudo apt install ufw -y
-  sudo apt install gufw -y
-  sudo apt-mark unhold firefox
-  sudo apt install firefox -y
-  sudo apt install nautilus -y
-  sudo apt install linux-generic -y
-  sudo apt install debsums -y
-  sudo apt install libpam-pwquality -y
-  sudo apt install net-tools -y
+  sudo $noGUI apt install unattended-upgrades -yq
+  sudo $noGUI apt install apt -yq
+  sudo $noGUI apt install ufw -yq
+  sudo $noGUI apt install gufw -yq
+  sudo $noGUI apt-mark unhold firefox
+  sudo $noGUI apt install firefox -yq
+  sudo $noGUI apt install nautilus -yq
+  sudo $noGUI apt install linux-generic -yq
+  sudo $noGUI apt install debsums -yq
+  sudo $noGUI apt install debconf-utils -yq
+  sudo $noGUI apt install libpam-pwquality -yq
+  sudo $noGUI apt install net-tools -yq
 }
 
 function ProhibitedFiles(){
@@ -276,7 +278,7 @@ function DeleteBadUsers(){
 function BadPackages(manual){
 
   # All default gnome games
-  sudo apt purge iagno lightsoff four-in-a-row gnome-robots pegsolitaire gnome-2048 hitori gnome-klotski gnome-mines gnome-mahjongg gnome-sudoku quadrapassel swell-foop gnome-tetravex gnome-taquin aisleriot gnome-chess five-or-more gnome-nibbles tali -y > /dev/null 2>&1 ; sudo apt autoremove -y > /dev/null 2>&1
+  sudo $noGUI apt purge iagno lightsoff four-in-a-row gnome-robots pegsolitaire gnome-2048 hitori gnome-klotski gnome-mines gnome-mahjongg gnome-sudoku quadrapassel swell-foop gnome-tetravex gnome-taquin aisleriot gnome-chess five-or-more gnome-nibbles tali -yq > /dev/null 2>&1 ; sudo $noGUI apt autoremove -yq > /dev/null 2>&1
   space
   red "The following can be bad packages. Double check and remove:"
   space
@@ -300,7 +302,7 @@ function BadPackages(manual){
 
 
 function SSHKeyGen(){
-  sudo apt -y install expect
+  sudo $noGUI apt -yq install expect
   cd /
   mkdir /home/$(echo $SCRIPTDIR | cut -d / -f3)/.ssh
   expect -c "
@@ -317,24 +319,54 @@ function SSHKeyGen(){
   chmod 640 /home/$(echo $SCRIPTDIR | cut -d / -f3)/.ssh/id_rsa.pub
 }
 
+# no 2>&1s allowed
 function CriticalServicePackages(){
-  sudo apt update
   declare -A service2systemctl
-  service2systemctl=(["apache2"]="apache2" ["mysql-server"]="mysql" ["samba"]="smbd" ["vsftpd"]="vsftpd" ["proftpd"]="proftpd" ["pure-ftpd"]="pure-ftpd" ["tnftpd"]="tnftpd" ["ssh"]="ssh" ["bind9"]="bind9")
+  service2systemctl=(["apache2"]="apache2" ["phpmyadmin"]="phpmyadmin" ["wordpress"]="wordpress" ["mariadb-server"]="mariadb" ["openvpn"]="openvpn" ["postgresql"]="postgresql" ["mysql-server"]="mysql" ["samba"]="smbd" ["vsftpd"]="vsftpd" ["proftpd"]="proftpd" ["pure-ftpd"]="pure-ftpd" ["ssh"]="ssh" ["bind9"]="bind9")
+  service2ufwport=(["apache2"]="80" ["openvpn"]="443" ["postgresql"]="5432" ["mysql-server"]="3306" ["samba"]="139,445" ["vsftpd"]="21" ["proftpd"]="21" ["pure-ftpd"]="21" ["tnftpd"]="69" ["ssh"]="222" ["bind9"]="53")
   SERVICES=()
-  for i in `cat $SCRIPTDIR/Inputs/criticalservices.txt`; do sudo apt install $i -y > /dev/null 2>&1; SERVICES+=($i); done
-  sleep 6
-  # smbd service is not found error?
-  for i in ${SERVICES[@]}; do sudo systemctl enable ${service2systemctl[$i]} > /dev/null 2>&1; sudo systemctl start ${service2systemctl[$i]} > /dev/null 2>&1; sudo ufw allow ${service2systemctl[$i]} > /dev/null 2>&1; done
+  for i in `cat $SCRIPTDIR/Inputs/criticalservices.txt`; do sudo $noGUI apt install $i -yq > /dev/null 2>&1; SERVICES+=($i); done
+  sudo $noGUI apt autoremove -yq > /dev/null 2>&1
+
+  if [[ "${SERVICES[@]}" =~ "phpmyadmin" ]]; then
+    sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2"
+    sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/dbconfig-install boolean false"
+    sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/dbconfig-remove boolean true"
+    sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/dbconfig-upgrade boolean false"
+    sudo $noGUI apt install phpmyadmin -yq > /dev/null 2>&1
+  fi
+
+  for i in ${SERVICES[@]}; do sudo systemctl enable ${service2systemctl[$i]} > /dev/null 2>&1; sudo systemctl start ${service2systemctl[$i]} > /dev/null 2>&1; sudo ufw allow ${service2ufwport[$i]}> /dev/null 2>&1; done
   for i in ${!service2systemctl[@]}
     do
-      if [[ ! " $(cat $SCRIPTDIR/Inputs/critcalservices.txt) " =~ " $i " ]]; then
-          sudo apt remove --purge $i -y > /dev/null 2>&1
+      if [[ ! " $(cat $SCRIPTDIR/Inputs/criticalservices.txt) " =~ "$i" ]]; then
+          sudo systemctl disable ${service2systemctl[$i]} > /dev/null 2>&1
+          sudo systemctl stop ${service2systemctl[$i]} > /dev/null 2>&1
+          sudo ufw deny ${service2ufwport[$i]}> /dev/null 2>&1
+          sudo $noGUI apt remove --purge $i -yq > /dev/null 2>&1
+      fi
     done
 }
 
 
 function Comments(){
+  # DEBIAN_FRONTEND=noninteractive -yqq --> for silent installs; but need to reconfigure with debconf-set-selections... ALWAYS CHECK.
+  # catch error dpkg --> dpkg --configure -a
+  # sudo systemctl reload apache2.service --> IMPORTANT TO RELOAD
+  # https://ubuntu.com/server/docs/how-to-install-and-configure-wordpress
+  # Use debconf-get-selections for pwquality
+  # phpmyadmin      phpmyadmin/password-confirm     password
+  # phpmyadmin      phpmyadmin/mysql/admin-pass     password
+  # phpmyadmin      phpmyadmin/app-password-confirm password
+  # Set permissions on those files.
+  # wordpress       wordpress/mysql/admin-pass      password
+  # wordpress       wordpress/mysql/app-pass        password
+  # wordpress       wordpress/app-password-confirm  password
+  # wordpress       wordpress/password-confirm      password
+  # mariadb-server  mariadb-server/root_password    password
+  # mariadb-server  mariadb-server/root_password_again password
+  # openvpn         openvpn/password-confirm        password
+  # python scripts to automatically add to bash scripts??
   # explain xargs
   # maybe log errors to a file like "package apache not found" etc.
   # perl might be malware double check.
@@ -346,7 +378,6 @@ function Comments(){
   # Apache2/Wordpress
   # MySQL/MariaDB/Postgresql 
   # PHP
-
   # Samba
   # FTP (vsftpd, proftpd, pure-ftpd, tnftpd)
   # SSH

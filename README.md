@@ -15,14 +15,12 @@ Put critical services in /home/$CUSER/Desktop/Scripting-main/Scripting-main/crit
           - php
           - phpmyadmin
           - wordpress
-          - mariadb
+          - mariadb-server
           - openvpn
           - samba
           - vsftpd
           - proftpd
           - pure-ftpd
-          - tnftpd
-          - openssh-server
           - bind9
 
   Everything this Script does: 
