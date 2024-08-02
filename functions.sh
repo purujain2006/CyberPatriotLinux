@@ -351,7 +351,7 @@ function CriticalServicePackages(){
 
 
 function Comments(){
-  # DEBIAN_FRONTEND=noninteractive -yqq --> for silent installs; but need to reconfigure with debconf-set-selections... ALWAYS CHECK.
+  # DEBIAN_FRONTEND=noninteractive -yq --> for silent installs; but need to reconfigure with debconf-set-selections... ALWAYS CHECK.
   # catch error dpkg --> dpkg --configure -a
   # sudo systemctl reload apache2.service --> IMPORTANT TO RELOAD
   # https://ubuntu.com/server/docs/how-to-install-and-configure-wordpress
