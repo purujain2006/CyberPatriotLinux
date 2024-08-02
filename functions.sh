@@ -32,6 +32,7 @@ function dblue(){
 function ScriptDirectory(){
   SCRIPTDIR=$(realpath $(dirname $0))
   noGUI="DEBIAN_FRONTEND=noninteractive"
+  noOutput= "$noOutput"
 }
 
 # Remove immutable bits
@@ -128,7 +129,7 @@ function AddNewUsers(){
   space
   echo "Adding new users.. with password: dq*eb5,69~n)_-JU<&V8 "
   space
-  for i in `cat $SCRIPTDIR/Inputs/newusers.txt` ; do sudo useradd $i > /dev/null 2>&1 ; echo $i >> $SCRIPTDIR/Inputs/users.txt; echo "Added new user " $i ; done
+  for i in `cat $SCRIPTDIR/Inputs/newusers.txt` ; do sudo useradd $i $noOutput ; echo $i >> $SCRIPTDIR/Inputs/users.txt; echo "Added new user " $i ; done
   echo "Done adding users."
   space
 }
@@ -218,8 +219,8 @@ function FixAdmins(){
   red "Changing admins..."
   space
   #for loop to read all usernames
-  for i in `cat /etc/passwd | cut -d ":" -f1` ; do sudo gpasswd -d $i sudo > /dev/null 2>&1 ; sudo gpasswd -d $i adm  > /dev/null 2>&1 ; echo "Removed " $i " as an admin"; done
-  for i in `cat $SCRIPTDIR/Inputs/admins.txt` ; do sudo gpasswd -a $i sudo > /dev/null 2>&1 ; sudo gpasswd -a $i adm > /dev/null 2>&1; echo "Added " $i " as an admin"; done
+  for i in `cat /etc/passwd | cut -d ":" -f1` ; do sudo gpasswd -d $i sudo $noOutput ; sudo gpasswd -d $i adm  $noOutput ; echo "Removed " $i " as an admin"; done
+  for i in `cat $SCRIPTDIR/Inputs/admins.txt` ; do sudo gpasswd -a $i sudo $noOutput ; sudo gpasswd -a $i adm $noOutput; echo "Added " $i " as an admin"; done
   space
   echo "Done changing admins "
 }
@@ -264,21 +265,21 @@ function InstallPackages(){
 function ProhibitedFiles(){
   mediatypes1=("*.mp3" "*.tgz" "*.mov" "*.mp4" "*.avi" "*.mpg" "*.mpeg" "*.flac" "*.m4a" "*.flv" "*.ogg")
   mediatypes2=("*.gif" "*.png" "*.jpg" "*.jpeg")
-  for i in ${mediatypes1[@]}; do find / -name $i -type f -delete > /dev/null 2>&1; echo "Deleting $i files"; done
-  for i in ${mediatypes2[@]}; do find /home/ -name $i -type f -delete > /dev/null 2>&1; echo "Deleting $i files"; done
-  for i in ${mediatypes2[@]}; do find /root/ -name $i -type f -delete > /dev/null 2>&1; echo "Deleting $i files"; done
+  for i in ${mediatypes1[@]}; do find / -name $i -type f -delete $noOutput; echo "Deleting $i files"; done
+  for i in ${mediatypes2[@]}; do find /home/ -name $i -type f -delete $noOutput; echo "Deleting $i files"; done
+  for i in ${mediatypes2[@]}; do find /root/ -name $i -type f -delete $noOutput; echo "Deleting $i files"; done
 }
 
 function DeleteBadUsers(){
   grep -E 1[0-9]{3}  /etc/passwd | sed s/:/\ / | awk '{print $1}' > /tmp/allusers
-  for i in `grep - Fxvf $SCRIPTDIR/Inputs/users.txt /tmp/allusers` ; do sudo userdel -r $i > /dev/null 2>&1; echo "Deleted user " $i; done
+  for i in `grep - Fxvf $SCRIPTDIR/Inputs/users.txt /tmp/allusers` ; do sudo userdel -r $i $noOutput; echo "Deleted user " $i; done
 }
 
 
 function BadPackages(manual){
 
   # All default gnome games
-  sudo $noGUI apt purge iagno lightsoff four-in-a-row gnome-robots pegsolitaire gnome-2048 hitori gnome-klotski gnome-mines gnome-mahjongg gnome-sudoku quadrapassel swell-foop gnome-tetravex gnome-taquin aisleriot gnome-chess five-or-more gnome-nibbles tali -yq > /dev/null 2>&1 ; sudo $noGUI apt autoremove -yq > /dev/null 2>&1
+  sudo $noGUI apt purge iagno lightsoff four-in-a-row gnome-robots pegsolitaire gnome-2048 hitori gnome-klotski gnome-mines gnome-mahjongg gnome-sudoku quadrapassel swell-foop gnome-tetravex gnome-taquin aisleriot gnome-chess five-or-more gnome-nibbles tali -yq $noOutput ; sudo $noGUI apt autoremove -yq $noOutput
   space
   red "The following can be bad packages. Double check and remove:"
   space
@@ -325,25 +326,25 @@ function CriticalServicePackages(){
   service2systemctl=(["apache2"]="apache2" ["phpmyadmin"]="phpmyadmin" ["wordpress"]="wordpress" ["mariadb-server"]="mariadb" ["openvpn"]="openvpn" ["postgresql"]="postgresql" ["mysql-server"]="mysql" ["samba"]="smbd" ["vsftpd"]="vsftpd" ["proftpd"]="proftpd" ["pure-ftpd"]="pure-ftpd" ["ssh"]="ssh" ["bind9"]="bind9")
   service2ufwport=(["apache2"]="80" ["openvpn"]="443" ["postgresql"]="5432" ["mysql-server"]="3306" ["samba"]="139,445" ["vsftpd"]="21" ["proftpd"]="21" ["pure-ftpd"]="21" ["tnftpd"]="69" ["ssh"]="222" ["bind9"]="53")
   SERVICES=()
-  for i in `cat $SCRIPTDIR/Inputs/criticalservices.txt`; do sudo $noGUI apt install $i -yq > /dev/null 2>&1; SERVICES+=($i); done
-  sudo $noGUI apt autoremove -yq > /dev/null 2>&1
+  for i in `cat $SCRIPTDIR/Inputs/criticalservices.txt`; do sudo $noGUI apt install $i -yq $noOutput; SERVICES+=($i); done
+  sudo $noGUI apt autoremove -yq $noOutput
 
   if [[ "${SERVICES[@]}" =~ "phpmyadmin" ]]; then
     sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2"
     sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/dbconfig-install boolean false"
     sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/dbconfig-remove boolean true"
     sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/dbconfig-upgrade boolean false"
-    sudo $noGUI apt install phpmyadmin -yq > /dev/null 2>&1
+    sudo $noGUI apt install phpmyadmin -yq $noOutput
   fi
 
-  for i in ${SERVICES[@]}; do sudo systemctl enable ${service2systemctl[$i]} > /dev/null 2>&1; sudo systemctl start ${service2systemctl[$i]} > /dev/null 2>&1; sudo ufw allow ${service2ufwport[$i]}> /dev/null 2>&1; done
+  for i in ${SERVICES[@]}; do sudo systemctl enable ${service2systemctl[$i]} $noOutput; sudo systemctl start ${service2systemctl[$i]} $noOutput; sudo ufw allow ${service2ufwport[$i]} $noOutput; done
   for i in ${!service2systemctl[@]}
     do
       if [[ ! " $(cat $SCRIPTDIR/Inputs/criticalservices.txt) " =~ "$i" ]]; then
-          sudo systemctl disable ${service2systemctl[$i]} > /dev/null 2>&1
-          sudo systemctl stop ${service2systemctl[$i]} > /dev/null 2>&1
-          sudo ufw deny ${service2ufwport[$i]}> /dev/null 2>&1
-          sudo $noGUI apt remove --purge $i -yq > /dev/null 2>&1
+          sudo systemctl disable ${service2systemctl[$i]} $noOutput
+          sudo systemctl stop ${service2systemctl[$i]} $noOutput
+          sudo ufw deny ${service2ufwport[$i]} $noOutput
+          sudo $noGUI apt remove --purge $i -yq $noOutput
       fi
     done
 }
