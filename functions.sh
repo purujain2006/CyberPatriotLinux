@@ -356,10 +356,13 @@ function Comments(){
   # sudo systemctl reload apache2.service --> IMPORTANT TO RELOAD
   # https://ubuntu.com/server/docs/how-to-install-and-configure-wordpress
   # Use debconf-get-selections for pwquality
+
   # phpmyadmin      phpmyadmin/password-confirm     password
   # phpmyadmin      phpmyadmin/mysql/admin-pass     password
   # phpmyadmin      phpmyadmin/app-password-confirm password
+  
   # Set permissions on those files.
+
   # wordpress       wordpress/mysql/admin-pass      password
   # wordpress       wordpress/mysql/app-pass        password
   # wordpress       wordpress/app-password-confirm  password
@@ -367,7 +370,9 @@ function Comments(){
   # mariadb-server  mariadb-server/root_password    password
   # mariadb-server  mariadb-server/root_password_again password
   # openvpn         openvpn/password-confirm        password
+
   # python scripts to automatically add to bash scripts??
+
   # explain xargs
   # maybe log errors to a file like "package apache not found" etc.
   # perl might be malware double check.
