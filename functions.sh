@@ -421,7 +421,7 @@ function Comments(){
 
 }
 
-#first
+# first
 # If you want to run this script; remove the () from the functions
 # CheckPoisonedConfigFiles(manual) --> CheckPoisonedConfigFiles
 # BadPackages(manual) --> BadPackages
