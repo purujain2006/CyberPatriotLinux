@@ -1,3 +1,5 @@
+functions.sh is currently being modified, for the original code which it is cleaning up, refer to https://github.com/purujain2006/Scripting
+
 Add all authorized users INCLUDING your own into /home/$CUSER/Desktop/Scripting-main/Scripting-main/users.txt
 
 Add all authorized ADMINS INCLUDING your own into /home/$CUSER/Desktop/Scripting-main/Scripting-main/admins.txt
