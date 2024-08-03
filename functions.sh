@@ -33,6 +33,7 @@ function ScriptDirectory(){
   SCRIPTDIR=$(realpath $(dirname $0))
   noGUI="DEBIAN_FRONTEND=noninteractive"
   noOutput= "$noOutput"
+  oldIFS=$IFS
 }
 
 # Remove immutable bits
@@ -355,7 +356,11 @@ function CriticalServicePackages(){
 }
 
 function Comments(){
+
+  # tentative symlink code
+  # oldIFS=$IFS; IFS=$'\n'; for line in `ls -la | grep "\->"`; do echo $line | awk '{print $9"/"}' | xargs ls -la | wc -l; echo $line | awk '{print $11"/"}' | xargs ls -la | wc -l; done; IFS=$oldIFS
   # wc -l symlinked directories and if there's a difference figure out what's wrong??
+  
   # ensure manual check that the default display manager being asked for lightdm is lightdm and not gdm3 (manual checks??)
   # ssh port is now 222
   # DEBIAN_FRONTEND=noninteractive -yq --> for silent installs; but need to reconfigure with debconf-set-selections... ALWAYS CHECK.
