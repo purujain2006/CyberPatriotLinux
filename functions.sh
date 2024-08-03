@@ -422,6 +422,12 @@ function Comments(){
 }
 
 #first
+# If you want to run this script; remove the () from the functions
+# CheckPoisonedConfigFiles(manual) --> CheckPoisonedConfigFiles
+# BadPackages(manual) --> BadPackages
+# etc.
+# Then sudo bash functions.sh
+
 ScriptDirectory()
 CheckPoisonedConfigFiles(manual)
 ReplacePoisonedBinaries()
