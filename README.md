@@ -21,6 +21,7 @@ Put critical services in /home/$CUSER/Desktop/Scripting-main/Scripting-main/crit
           - vsftpd
           - proftpd
           - pure-ftpd
+          - lightdm
           - bind9
 
   Everything this Script does: 

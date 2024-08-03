@@ -322,7 +322,7 @@ function SSHKeyGen(){
 
 function CriticalServicePackages(){
   declare -A service2systemctl
-  service2systemctl=(["apache2"]="apache2" ["phpmyadmin"]="phpmyadmin" ["wordpress"]="wordpress" ["mariadb-server"]="mariadb" ["openvpn"]="openvpn" ["postgresql"]="postgresql" ["mysql-server"]="mysql" ["samba"]="smbd" ["vsftpd"]="vsftpd" ["proftpd"]="proftpd" ["pure-ftpd"]="pure-ftpd" ["ssh"]="ssh" ["bind9"]="bind9")
+  service2systemctl=(["apache2"]="apache2" ["lightdm"]="lightdm" ["phpmyadmin"]="phpmyadmin" ["wordpress"]="wordpress" ["mariadb-server"]="mariadb" ["openvpn"]="openvpn" ["postgresql"]="postgresql" ["mysql-server"]="mysql" ["samba"]="smbd" ["vsftpd"]="vsftpd" ["proftpd"]="proftpd" ["pure-ftpd"]="pure-ftpd" ["ssh"]="ssh" ["bind9"]="bind9")
   service2ufwport=(["apache2"]="80" ["openvpn"]="443" ["postgresql"]="5432" ["mysql-server"]="3306" ["samba"]="139,445" ["vsftpd"]="21" ["proftpd"]="21" ["pure-ftpd"]="21" ["tnftpd"]="69" ["ssh"]="222" ["bind9"]="53")
   SERVICES=()
   for i in `cat $SCRIPTDIR/Inputs/criticalservices.txt`; do sudo $noGUI apt install $i -yq $noOutput; SERVICES+=($i); done
@@ -334,6 +334,12 @@ function CriticalServicePackages(){
     sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/dbconfig-remove boolean true"
     sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/dbconfig-upgrade boolean false"
     sudo $noGUI apt install phpmyadmin -yq $noOutput
+  fi
+
+  if [[ "${SERVICES[@]}" =~ "lightdm" ]]; then
+    sudo debconf-set-selections <<< "gdm3    shared/default-x-display-manager select lightdm"
+    sudo debconf-set-selectiosn <<< "lightdm shared/default-x-display-manager select lightdm"
+    sudo $noGUI apt install lightdm -yq $noOutput
   fi
 
   for i in ${SERVICES[@]}; do sudo systemctl enable ${service2systemctl[$i]} $noOutput; sudo systemctl start ${service2systemctl[$i]} $noOutput; sudo ufw allow ${service2ufwport[$i]} $noOutput; done
@@ -350,6 +356,7 @@ function CriticalServicePackages(){
 
 
 function Comments(){
+  # ensure manual check that the default display manager being asked for lightdm is lightdm and not gdm3 (manual checks??)
   # ssh port is now 222
   # DEBIAN_FRONTEND=noninteractive -yq --> for silent installs; but need to reconfigure with debconf-set-selections... ALWAYS CHECK.
   # catch error dpkg --> dpkg --configure -a
