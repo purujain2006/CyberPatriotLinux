@@ -354,8 +354,8 @@ function CriticalServicePackages(){
     done
 }
 
-
 function Comments(){
+  # wc -l symlinked directories and if there's a difference figure out what's wrong??
   # ensure manual check that the default display manager being asked for lightdm is lightdm and not gdm3 (manual checks??)
   # ssh port is now 222
   # DEBIAN_FRONTEND=noninteractive -yq --> for silent installs; but need to reconfigure with debconf-set-selections... ALWAYS CHECK.
