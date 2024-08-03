@@ -320,7 +320,6 @@ function SSHKeyGen(){
   chmod 640 /home/$(echo $SCRIPTDIR | cut -d / -f3)/.ssh/id_rsa.pub
 }
 
-# no 2>&1s allowed
 function CriticalServicePackages(){
   declare -A service2systemctl
   service2systemctl=(["apache2"]="apache2" ["phpmyadmin"]="phpmyadmin" ["wordpress"]="wordpress" ["mariadb-server"]="mariadb" ["openvpn"]="openvpn" ["postgresql"]="postgresql" ["mysql-server"]="mysql" ["samba"]="smbd" ["vsftpd"]="vsftpd" ["proftpd"]="proftpd" ["pure-ftpd"]="pure-ftpd" ["ssh"]="ssh" ["bind9"]="bind9")
@@ -351,6 +350,7 @@ function CriticalServicePackages(){
 
 
 function Comments(){
+  # ssh port is now 222
   # DEBIAN_FRONTEND=noninteractive -yq --> for silent installs; but need to reconfigure with debconf-set-selections... ALWAYS CHECK.
   # catch error dpkg --> dpkg --configure -a
   # sudo systemctl reload apache2.service --> IMPORTANT TO RELOAD
