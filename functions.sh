@@ -302,7 +302,6 @@ function BadPackages(manual){
 
 }
 
-
 function SSHKeyGen(){
   sudo $noGUI apt -yq install expect
   cd /
@@ -357,6 +356,8 @@ function CriticalServicePackages(){
 
 function Comments(){
 
+  # ask them to copy and paste the user passwords?? --> not always justt the main user password
+
   # tentative symlink code
   # oldIFS=$IFS; IFS=$'\n'; for line in `ls -la | grep "\->"`; do echo $line | awk '{print $9"/"}' | xargs ls -la | wc -l; echo $line | awk '{print $11"/"}' | xargs ls -la | wc -l; done; IFS=$oldIFS
   # wc -l symlinked directories and if there's a difference figure out what's wrong??
@@ -373,7 +374,7 @@ function Comments(){
   # phpmyadmin      phpmyadmin/mysql/admin-pass     password
   # phpmyadmin      phpmyadmin/app-password-confirm password
   
-  # Set permissions on those files.
+  # Set permissions on those and these files.
 
   # wordpress       wordpress/mysql/admin-pass      password
   # wordpress       wordpress/mysql/app-pass        password
