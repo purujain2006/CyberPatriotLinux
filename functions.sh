@@ -363,6 +363,8 @@ function Comments(){
   # cd /etc; sudo chmod 644 -R /*/*.conf
 
   # The bottom two commands need to be modified to correctly target config files.
+  # Install all critical services first.
+  # Also double check wordpress mariadb and phpmyadmin password files + configs
   # cd /etc; sudo chmod 644 -R /*.conf
   # cd /etc; sudo chmod 644 -R /*.cnf
 
@@ -429,8 +431,6 @@ function Comments(){
   # check disown after & to untie to terminal
   # remove echo statements from background non manual functions
   # kernel things moduels etc.
-  
-
 }
 
 # first
