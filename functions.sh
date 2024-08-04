@@ -355,6 +355,8 @@ function CriticalServicePackages(){
 }
 
 function Comments(){
+  # https://github.com/UCI-CCDC/CCDC
+
   # Make a list of all possible software that can be used to initiate backdoors
   # example the ssl vulnerability backdoor (vecna) 
   # Maybe also set up listeners to check for modifications in the system ( a log but ignores scripts )
