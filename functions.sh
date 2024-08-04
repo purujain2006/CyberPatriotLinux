@@ -342,7 +342,7 @@ function CriticalServicePackages(){
     sudo $noGUI apt install lightdm -yq $noOutput
   fi
 
-  for i in ${SERVICES[@]}; do sudo systemctl enable ${service2systemctl[$i]} $noOutput; sudo systemctl start ${service2systemctl[$i]} $noOutput; sudo ufw allow ${service2ufwport[$i]} $noOutput; done
+  for i in ${SERVICES[@]}; do sudo systemctl enable ${service2systemctl[$i]} $noOutput; sudo systemctl restart ${service2systemctl[$i]} $noOutput; sudo ufw allow ${service2ufwport[$i]} $noOutput; done
   for i in ${!service2systemctl[@]}
     do
       if [[ ! " $(cat $SCRIPTDIR/Inputs/criticalservices.txt) " =~ "$i" ]]; then
