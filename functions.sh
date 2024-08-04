@@ -355,6 +355,18 @@ function CriticalServicePackages(){
 }
 
 function Comments(){
+  # /etc/shadow not world readable
+  # /etc/passwd not world writable
+  # /etc/group not world writable
+  # Folders (directories) must have 'execute' permissions set (x or 1)
+  # cd /etc; sudo chmod 644 -R /*/*.conf
+  # cd /etc; sudo chmod 644 -R /*/*.conf
+
+  # The bottom two commands need to be modified to correctly target config files.
+  # cd /etc; sudo chmod 644 -R /*.conf
+  # cd /etc; sudo chmod 644 -R /*.cnf
+
+  # /etc/gshadow not world readable
 
   # ask them to copy and paste the user passwords?? --> not always justt the main user password
 
