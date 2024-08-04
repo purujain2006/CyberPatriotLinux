@@ -355,6 +355,9 @@ function CriticalServicePackages(){
 }
 
 function Comments(){
+  # Make a list of all possible software that can be used to initiate backdoors
+  # example the ssl vulnerability backdoor (vecna) 
+  # Maybe also set up listeners to check for modifications in the system ( a log but ignores scripts )
   # /etc/shadow not world readable
   # /etc/passwd not world writable
   # /etc/group not world writable
