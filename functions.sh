@@ -355,6 +355,11 @@ function CriticalServicePackages(){
 }
 
 function Comments(){
+  # new users need to have correct login shell --> usermod -s 
+  # default login shell config file check it
+  # check default /etc/skel.
+  # explain primary vs secondary groups.
+
   # in ZeroUID function need to delete and readd existing line. 
 
   # https://github.com/UCI-CCDC/CCDC  
