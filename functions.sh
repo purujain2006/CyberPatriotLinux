@@ -355,6 +355,9 @@ function CriticalServicePackages(){
 }
 
 function Comments(){
+  
+  # find /PATH executable to find bad files? --> in home directories etc??
+
   # new users need to have correct login shell --> usermod -s 
   # default login shell config file check it
   # check default /etc/skel.
