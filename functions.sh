@@ -360,8 +360,6 @@ function Comments(){
   # check default /etc/skel.
   # explain primary vs secondary groups.
 
-  # in ZeroUID function need to delete and readd existing line. 
-
   # https://github.com/UCI-CCDC/CCDC  
 
   # Make a list of all possible software that can be used to initiate backdoors
