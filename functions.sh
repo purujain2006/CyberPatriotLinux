@@ -130,7 +130,7 @@ function AddNewUsers(){
   space
   echo "Adding new users.. with password: dq*eb5,69~n)_-JU<&V8 "
   space
-  for i in `cat $SCRIPTDIR/Inputs/newusers.txt` ; do sudo useradd $i $noOutput ; echo $i >> $SCRIPTDIR/Inputs/users.txt; echo "Added new user " $i ; done
+  for i in `cat $SCRIPTDIR/Inputs/newusers.txt` ; do sudo useradd $i $noOutput ; sudo usermod -s /bin/bash $i $noOutput; echo $i >> $SCRIPTDIR/Inputs/users.txt; echo "Added new user " $i ; done
   echo "Done adding users."
   space
 }
