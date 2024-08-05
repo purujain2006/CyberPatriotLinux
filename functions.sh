@@ -355,7 +355,9 @@ function CriticalServicePackages(){
 }
 
 function Comments(){
-  # https://github.com/UCI-CCDC/CCDC
+  # in ZeroUID function need to delete and readd existing line. 
+
+  # https://github.com/UCI-CCDC/CCDC  
 
   # Make a list of all possible software that can be used to initiate backdoors
   # example the ssl vulnerability backdoor (vecna) 
