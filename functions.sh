@@ -284,9 +284,6 @@ function BadPackages(manual){
   space
   red "The following can be bad packages. Double check and remove:"
   space
-
-  # Mark telnet remmina netcat ftp openssh-client openvpn snapd as bad packages that are installed by default
-  # Establish base and current packages
   GET $(cat $SCRIPTDIR/InfoFiles/manifests.txt | grep $(lsb_release -c | awk '{print $2}') | awk '{print $2}') | awk '{print $1}' | grep -v telnet | grep -v remmina | grep -v netcat | grep -v ftp | grep -v openssh | grep -v openvpn | grep -v snapd > $SCRIPTDIR/SideProductFiles/BadPackageCheck/basepackages
   dpkg-query -l | tail -n+4 | awk '{print $2}' > $SCRIPTDIR/SideProductFiles/BadPackageCheck/currentpackages
 
@@ -357,6 +354,8 @@ function CriticalServicePackages(){
 function Comments(){
   
   # find /PATH executable to find bad files? --> in home directories etc??
+  # find . -perm -g=rwx -perm -o=rwx | grep -v ssl | grep -v alsa | grep -v alternatives/ | grep -v /rc | grep -v php | grep -v apache2 | grep -v fonts | grep -v systemd | grep -v network | grep -v mysql
+  # but have to compare to default etc files?? --> need better way to check insecure permissions
 
   # new users need to have correct login shell --> usermod -s 
   # default login shell config file check it
