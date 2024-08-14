@@ -352,6 +352,11 @@ function CriticalServicePackages(){
 }
 
 function Comments(){
+
+  # sudo find . -printf '%M %p\n'
+
+  # MUST HAVE below perms
+  # chmod o+rx /etc/php5/apache2
   
   # find /PATH executable to find bad files? --> in home directories etc??
   # find . -perm -g=rwx -perm -o=rwx | grep -v ssl | grep -v alsa | grep -v alternatives/ | grep -v /rc | grep -v php | grep -v apache2 | grep -v fonts | grep -v systemd | grep -v network | grep -v mysql
