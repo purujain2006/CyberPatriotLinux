@@ -354,6 +354,7 @@ function CriticalServicePackages(){
 function Comments(){
 
   # lighthttpd? for a service?
+  # pro pure maria 
   # if doing this for config files for all services, have to compare against to isolate
   # proftpd, mysql, mariadb and other services that conflict when installed with their diff versions
   # mysql (mariadb+ mysql)
