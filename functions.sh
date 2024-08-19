@@ -353,6 +353,9 @@ function CriticalServicePackages(){
 
 function Comments(){
 
+  # if doing this for config files for all services, have to compare against to isolate
+  # proftpd, mysql, mariadb and other services that conflict when installed with their diff versions
+  # mysql (mariadb+ mysql)
   # sudo find . -printf '%M %p\n'
 
   # MUST HAVE below perms
@@ -382,6 +385,7 @@ function Comments(){
   # The bottom two commands need to be modified to correctly target config files.
   # Install all critical services first.
   # Also double check wordpress mariadb and phpmyadmin password files + configs
+  # also consider .ini files (they're also configs)
   # cd /etc; sudo chmod 644 -R /*.conf
   # cd /etc; sudo chmod 644 -R /*.cnf
 
