@@ -1,5 +1,9 @@
-sudo find . -printf '%M %p\n' | grep -v logcheck | grep -v alternatives/ | grep -v console-setup | grep -v fonts | grep -v default | grep -v ssl | grep -v sgml | grep -v profile | cut -d / -f2 |sort | uniq -c | sort -nr
-    
+sudo find . -printf '%M %p\n'
+
+
+./sysctl.d/99-sysctl.conf
+./etc/resolv.conf
+
 195 apache2
     182 apparmor.d
     156 systemd

@@ -353,6 +353,9 @@ function CriticalServicePackages(){
 
 function Comments(){
 
+  #find . -name "*.ini" -exec chmod 644 {} \;
+  # mysql stops working.
+
   # lighthttpd? for a service?
   # pro pure maria 
   # if doing this for config files for all services, have to compare against to isolate
