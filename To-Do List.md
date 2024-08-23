@@ -14,3 +14,7 @@ Task 3:
 Task 4:
 
     - Ownership of application directories, such as FTP servers.
+
+Task 5:
+
+    - Add a "What to do if you screwed up" section to the Scripting repository.

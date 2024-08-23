@@ -353,8 +353,9 @@ function CriticalServicePackages(){
 
 function Comments(){
 
-  #find . -name "*.ini" -exec chmod 644 {} \;
+  # find . -name "*.ini" -exec chmod 644 {} \;
   # mysql stops working.
+  # dpkg-reconfigure <package>
 
   # lighthttpd? for a service?
   # pro pure maria 
@@ -383,9 +384,17 @@ function Comments(){
   # /etc/shadow not world readable
   # /etc/passwd not world writable
   # /etc/group not world writable
+
   # Folders (directories) must have 'execute' permissions set (x or 1)
-  # cd /etc; sudo chmod 644 -R /*/*.conf
-  # cd /etc; sudo chmod 644 -R /*/*.conf
+  # within this code snippet, ensure that the permissions are set correctly becasue ORDER MATTERS (.d before conf.d)
+
+  # find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 ls -la | cut -d " " -f1 | sort | uniq -c
+  # DO THIS FOR EACH TYPE BEFORE BLINDLY CHANGING PERMISSIONS.
+
+  # find ./  -regextype posix-egrep -regex '.*/*\.d$' -print0 | xargs -0 chmod 755 --> good
+  # find ./  -regextype posix-egrep -regex '.*/*\.conf.d$' -print0 | xargs -0 chmod 755 -> good
+  # find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 chmod 644
+  # find ./  -regextype posix-egrep -regex '.*/*\.cnf$' -print0 | xargs -0 chmod 644
 
   # The bottom two commands need to be modified to correctly target config files.
   # Install all critical services first.
