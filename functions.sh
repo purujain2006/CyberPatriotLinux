@@ -388,20 +388,22 @@ function Comments(){
   # Folders (directories) must have 'execute' permissions set (x or 1)
   # within this code snippet, ensure that the permissions are set correctly becasue ORDER MATTERS (.d before conf.d)
 
+  # DO THE BOTTOM COMMAND FOR EACH TYPE BEFORE BLINDLY CHANGING PERMISSIONS.
+
+  # Files
   # find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 ls -la | cut -d " " -f1 | sort | uniq -c
-  # DO THIS FOR EACH TYPE BEFORE BLINDLY CHANGING PERMISSIONS.
+
+  #Directories
+  # find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 ls -lad | cut -d " " -f1 | sort | uniq -c
 
   # find ./  -regextype posix-egrep -regex '.*/*\.d$' -print0 | xargs -0 chmod 755 --> good
   # find ./  -regextype posix-egrep -regex '.*/*\.conf.d$' -print0 | xargs -0 chmod 755 -> good
   # find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 chmod 644
   # find ./  -regextype posix-egrep -regex '.*/*\.cnf$' -print0 | xargs -0 chmod 644
 
-  # The bottom two commands need to be modified to correctly target config files.
+  
   # Install all critical services first.
   # Also double check wordpress mariadb and phpmyadmin password files + configs
-  # also consider .ini files (they're also configs)
-  # cd /etc; sudo chmod 644 -R /*.conf
-  # cd /etc; sudo chmod 644 -R /*.cnf
 
   # /etc/gshadow not world readable
 
