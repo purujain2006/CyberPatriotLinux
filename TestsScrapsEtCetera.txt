@@ -10,11 +10,50 @@ sudo systemctl reload apache2.service
 
 # good way to check unique etc permissions
 find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 ls -la | cut -d " " -f1 | sort | uniq -c
-
+find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 ls -la | grep -v fonts | grep -v alsa | grep -v sane | grep -v dbus | sort
 
 # some of the directories with different permissions?
 ./sysctl.d/99-sysctl.conf
 ./etc/resolv.conf
+
+# etc specific permisisons
+# grep -v \/fonts\/conf.d
+
+
+# lrwxrwxrwx
+# rmt
+# mtab
+# resolv.conf --> should be 644
+# os-release
+# vtrgb
+# localtime
+
+
+# -r--r-----
+# sudoers
+
+
+# -rw-------
+# .pwd.lock
+
+
+# -rw-r-----
+# gshadow-
+# gshadow
+# shadow
+# shadow-
+
+drwxr-s---  chatscripts
+drwxr-sr-x  bind
+
+# -rwxr-xr-x
+# subgid
+# subuid
+# machine-id
+# zsh_command_not_found
+# passwd
+# ca-certificates.conf.dpkg-old
+
 
 # Services file
 

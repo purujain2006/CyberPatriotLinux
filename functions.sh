@@ -391,17 +391,17 @@ function Comments(){
   # DO THE BOTTOM COMMAND FOR EACH TYPE BEFORE BLINDLY CHANGING PERMISSIONS.
 
   # Files
-  # find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 ls -la | cut -d " " -f1 | sort | uniq -c
+  # find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | grep -v \/fonts\/conf.d | xargs -0 ls -la | cut -d " " -f1 | sort | uniq -c
 
   #Directories
-  # find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 ls -lad | cut -d " " -f1 | sort | uniq -c
+  # find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | grep -v \/fonts\/conf.d | xargs -0 ls -lad | cut -d " " -f1 | sort | uniq -c
 
   # find ./  -regextype posix-egrep -regex '.*/*\.d$' -print0 | xargs -0 chmod 755 --> good
   # find ./  -regextype posix-egrep -regex '.*/*\.conf.d$' -print0 | xargs -0 chmod 755 -> good
   # find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 chmod 644
   # find ./  -regextype posix-egrep -regex '.*/*\.cnf$' -print0 | xargs -0 chmod 644
 
-  
+
   # Install all critical services first.
   # Also double check wordpress mariadb and phpmyadmin password files + configs
 
