@@ -2,6 +2,9 @@
 
 sudo find . -printf '%M %p\n'
 
+# -type f for files
+# -type d for directories
+
 # commands to restart phpmyadmin
 sudo ln -s /etc/phpmyadmin/apache.conf /etc/apache2/conf-available/phpmyadmin.conf
 sudo a2enconf phpmyadmin.conf
@@ -12,13 +15,39 @@ sudo systemctl reload apache2.service
 find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 ls -la | cut -d " " -f1 | sort | uniq -c
 find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 ls -la | grep -v fonts | grep -v alsa | grep -v sane | grep -v dbus | sort
 
+
+# Scans the directory from a user without sudo permissions which is ESSENTIAL for a backdoor. Why would you only want a backdoor accessible to root?
+
+# sudo su -l $(echo $SCRIPTDIR | cut -d / -f3) -c "find /etc  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 ls -la | grep -v fonts | grep -v alsa | grep -v sane | grep -v dbus | grep -v '\->' | sort"
+# su -l puru -c "find /etc -type f -printf '%M %p\n'" | sort | grep -v /etc/ssl/certs
+# cut -d "/" -f3 | uniq -c
+
+
+# 1 -r--r-----
+# 8 -rw-------
+# 20 -rw-r-----
+# 485 -rw-r--r--
+# 698 -rwxr-xr-x
+
+
+# a2enmod for apache2 modules + mods-enabled directory? 
+
 # some of the directories with different permissions?
 ./sysctl.d/99-sysctl.conf
 ./etc/resolv.conf
 
-# etc specific permisisons
-# grep -v \/fonts\/conf.d
 
+# etc specific 
+# grep -v \/fonts\/conf. --> surprisingly 644??
+
+# OTHER
+-rw-r--r-- /etc/apparmor/parser.conf --> rest of apparmor is 755
+-rw------- 1 root     root      2960 Aug 20 04:53 /etc/dbconfig-common/phpmyadmin.conf
+-rw-r----- 1 postgres postgres  1636 Aug 20 04:52 /etc/postgresql/14/main/pg_ident.conf
+-rw-r----- 1 postgres postgres  5002 Aug 20 04:52 /etc/postgresql/14/main/pg_hba.conf
+-rw-r----- 1 root     lp         378 Aug 28 02:50 /etc/cups/subscriptions.conf
+-rw-r--r-- /etc/ssl/certs/ca-certificates.crt
+-rw-r--r-- /etc/ssl/certs/ssl-cert-snakeoil.pem
 
 # lrwxrwxrwx
 # rmt
@@ -35,6 +64,7 @@ find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 ls -la |
 
 # -rw-------
 # .pwd.lock
+# /etc/dbconfig-common/phpmyadmin.conf
 
 
 # -rw-r-----
@@ -42,6 +72,9 @@ find ./  -regextype posix-egrep -regex '.*/*\.conf$' -print0 | xargs -0 ls -la |
 # gshadow
 # shadow
 # shadow-
+# /etc/postgresql/14/main/pg_ident.conf
+# /etc/postgresql/14/main/pg_hba.conf
+# /etc/cups/subscriptions.conf
 
 drwxr-s---  chatscripts
 drwxr-sr-x  bind
@@ -68,6 +101,38 @@ bind9
 #command
 
 for i in `cat /home/puru/services`; do sudo service $i restart; sudo service $i status; done
+
+# remember symlink permissions are irrelevant (source file matters, pointing file will always be 777)
+# apache2 mods-available
+
+dav_fs.conf
+cgid.conf
+mime_magic.conf
+ldap.conf
+dir.conf
+proxy_ftp.conf
+userdir.conf
+proxy_balancer.conf
+actions.conf
+info.conf
+deflate.conf
+mpm_prefork.conf
+mpm_event.conf
+negotiation.conf
+status.conf
+proxy.conf
+mpm_worker.conf
+alias.conf
+php8.1.conf
+cache_disk.conf
+reqtimeout.conf
+http2.conf
+setenvif.conf
+proxy_html.conf
+ssl.conf
+autoindex.conf
+mime.conf
+
 
 #Defaults
 
