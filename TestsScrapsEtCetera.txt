@@ -1,3 +1,10 @@
+# More research into etc permissions
+# Plan to find a list of all conf files that require 644
+# Using the move of viewing etc through a non-superuser account to find files that are world-viewable at least.
+# Might need to isolate them based on world-writeable and/or executable?
+# To secure /etc's configs, we should probably set everything to 644 except the ones that need to be world-executable.
+# Want to avoid world-writeable as much as possible, and there are few files that need that permission.
+
 # List permisisons and files
 
 sudo find . -printf '%M %p\n'
