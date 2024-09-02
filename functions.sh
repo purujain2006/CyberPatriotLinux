@@ -353,6 +353,25 @@ function CriticalServicePackages(){
 
 function Comments(){
 
+  # 640 permissions are for when you don't want average users to know the file exists (example /etc/shadow)
+  # 644 permissions are for when you want the average user to read the file (for config purposes) but not write to the file. (example /etc/passwd) (mostly files)
+  # 777 permissions are for when you want the average user to read, write, and execute the file. (example /SayHi.txt) (literally should never use this)
+  # 755 permissions are for when you only want the owner to modify the file, while the other users can read things for config purposes. (example /etc) (mostly directories)
+
+  # if a file like /etc/backdoors/evil.sh exists, it either needs to have OTHER write/execute permissiosn OR group permissions that are similar with the attacker groupname.
+
+  # Explain permission structure in Linux
+  # 777 applies to all FILES under the directory, but if the 777 directory has a directory under it
+  # the directory will apply it's own permissions to the files under it and itself.
+
+  # 750 every directory in /home
+  # find /path/to/your/wordpress/install/ -type f -exec chmod 640 {} \;??
+
+  # Scan for hidden user and bad user's name throughout filesystem??
+  # ex. vecna
+
+  # Does cyberpatriot mark nullok_secure as a vuln??
+
   # find . -name "*.ini" -exec chmod 644 {} \;
   # mysql stops working.
   # dpkg-reconfigure <package>
