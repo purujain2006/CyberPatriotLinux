@@ -351,6 +351,28 @@ function CriticalServicePackages(){
     done
 }
 
+
+
+
+function EtcPermissions(ERRORCHECK){
+  clear
+  red "Changing insecure permisson files/directories in /etc..."
+  space
+  # if condition is currently a syntax error
+  for i in `ls -la -Issl -Irc*.d -Ialternatives -Ifonts -Ialsa -R | grep -v .path| grep -v .want | grep -v .socket | grep -v .mount | grep -v .timer | grep -e ^d -e ^- | grep -e "^-........w." -e "^-.......w...." -e "^d.......w." -e "^d....w...." | grep -vF "." 2>/dev/null | awk '{print $9}'`; do find ~+ -printf '%M %p\n' | grep $i; if $(find ~+ -printf '%M %p\n' | grep $i | grep -q -e ^d); then sudo chmod 755 $(find ~+ -printf '%p\n' | grep $i); else sudo chmod 644 $(find ~+ -printf '%p\n' | grep $i); fi; done 2>/dev/null
+  # Log files and create error script for manual checking that corrects penalties?
+  space
+}
+
+#double check this function
+function System777Check(manual){
+  sudo find / -printf '%M %p\n'  -path ./mnt -prune 2>/dev/null | grep rwxrwxrwx | grep -v "lrwx" | grep -v "srwx" | grep -v tmp > /tmp/777s
+  cat /tmp/777s | grep -v "\./init"
+  space
+  red "The above files/directories have 777 permissions. Please change them to 755 or 644 IF reasonable."
+  space 
+}
+
 function Comments(){
 
   # 640 permissions are for when you don't want average users to know the file exists (example /etc/shadow)
