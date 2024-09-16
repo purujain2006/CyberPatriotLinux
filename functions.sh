@@ -368,6 +368,7 @@ function EtcPermissions(ERRORCHECK){
 #double check this function
 function System777Check(ERRORCHECK){
   cd /; sudo find . -printf '%M %p\n'  -path ./mnt -prune \ 2>/dev/null | grep rwxrwxrwx | grep -v "lrwx" | grep -v "srwx" | grep -v tmp > /tmp/777s
+  oldIFS=$IFS; IFS=$'\n'; for i in `cat /tmp/777s`; do if (echo $i | grep -q ^d); then sudo chmod 755 $(echo $i | awk '{print $2}'); else sudo chmod 644 $(echo $i | awk '{print $2}'); fi; done; IFS=$oldIFS
   cat /tmp/777s | grep -v "\./init"
   space
   red "The above files/directories have 777 permissions. Please change them to 755 or 644"
