@@ -32,7 +32,7 @@ function dblue(){
 function ScriptDirectory(){
   SCRIPTDIR=$(realpath $(dirname $0))
   noGUI="DEBIAN_FRONTEND=noninteractive"
-  noOutput= "$noOutput"
+  noOutput= "> /dev/null 2>&1"
   oldIFS=$IFS
 }
 
