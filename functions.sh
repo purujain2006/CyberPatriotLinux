@@ -375,7 +375,14 @@ function System777Check(ERRORCHECK){
   space 
 }
 
+function PAMpwquality(){
+  sudo $noGUI apt install libpam-pwquality -yq $noOutput
+  #currently fixed common-password and common-auth
+}
+
 function Comments(){
+
+  # ONLY IF U SCREW UP pam-auth-update --force
 
   #MANUAL
   #ERRORCHECK
