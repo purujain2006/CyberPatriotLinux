@@ -377,10 +377,17 @@ function System777Check(ERRORCHECK){
 
 function PAMpwquality(){
   sudo $noGUI apt install libpam-pwquality -yq $noOutput
+  sudo cp /etc/pam.d/common-password /etc/pam.d/common-password.bak
+  sudo cp /etc/pam.d/common-auth /etc/pam.d/common-auth.bak
+  cat $SCRIPTDIR/Configs/pam.d/common-password > /etc/pam.d/common-password
+  cat $SCRIPTDIR/Configs/pam.d/common-auth  > /etc/pam.d/common-auth
+
   #currently fixed common-password and common-auth
 }
 
 function Comments(){
+
+  # expire every user's password except ur own
 
   # ONLY IF U SCREW UP pam-auth-update --force
 
