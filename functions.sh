@@ -381,8 +381,6 @@ function PAMpwquality(){
   sudo cp /etc/pam.d/common-auth /etc/pam.d/common-auth.bak
   cat $SCRIPTDIR/Configs/pam.d/common-password > /etc/pam.d/common-password
   cat $SCRIPTDIR/Configs/pam.d/common-auth  > /etc/pam.d/common-auth
-
-  #currently fixed common-password and common-auth
 }
 
 function Comments(){
@@ -390,6 +388,7 @@ function Comments(){
   # expire every user's password except ur own
 
   # ONLY IF U SCREW UP pam-auth-update --force
+  # DO NOT DO THIS IF THE CONFIGS ARE GOOD.
 
   #MANUAL
   #ERRORCHECK
