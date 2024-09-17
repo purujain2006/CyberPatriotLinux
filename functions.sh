@@ -300,7 +300,7 @@ function BadPackages(manual){
 }
 
 function SSHKeyGen(){
-  sudo $noGUI apt -yq install expect
+  sudo $noGUI apt -yq install expect $noOutput
   cd /
   mkdir /home/$(echo $SCRIPTDIR | cut -d / -f3)/.ssh
   expect -c "
@@ -313,8 +313,10 @@ function SSHKeyGen(){
   send \"j@Hn\r\"
   expect eof
   "
+  clear
   chmod 600 /home/$(echo $SCRIPTDIR | cut -d / -f3)/.ssh/id_rsa
   chmod 640 /home/$(echo $SCRIPTDIR | cut -d / -f3)/.ssh/id_rsa.pub
+  clear
 }
 
 function CriticalServicePackages(){
@@ -339,7 +341,7 @@ function CriticalServicePackages(){
     sudo $noGUI apt install lightdm -yq $noOutput
   fi
 
-  for i in ${SERVICES[@]}; do sudo systemctl enable ${service2systemctl[$i]} $noOutput; sudo systemctl restart ${service2systemctl[$i]} $noOutput; sudo ufw allow ${service2ufwport[$i]} $noOutput; done
+  for i in ${SERVICES[@]}; do sudo systemctl unmask ${service2systemctl[$i]} $noOutput; sudo systemctl restart ${service2systemctl[$i]} $noOutput;  sudo systemctl enable ${service2systemctl[$i]} $noOutput; sudo ufw allow ${service2ufwport[$i]} $noOutput; done
   for i in ${!service2systemctl[@]}
     do
       if [[ ! " $(cat $SCRIPTDIR/Inputs/criticalservices.txt) " =~ "$i" ]]; then
@@ -367,23 +369,60 @@ function EtcPermissions(ERRORCHECK){
 
 #double check this function
 function System777Check(ERRORCHECK){
-  cd /; sudo find . -printf '%M %p\n'  -path ./mnt -prune \ 2>/dev/null | grep rwxrwxrwx | grep -v "lrwx" | grep -v "srwx" | grep -v tmp > /tmp/777s
-  oldIFS=$IFS; IFS=$'\n'; for i in `cat /tmp/777s`; do if (echo $i | grep -q ^d); then sudo chmod 755 $(echo $i | awk '{print $2}'); else sudo chmod 644 $(echo $i | awk '{print $2}'); fi; done; IFS=$oldIFS
+  cd /; sudo find . -printf '%M %p\n'  -path ./mnt -prune 2>/dev/null | grep rwxrwxrwx | grep -v "lrwx" | grep -v "srwx" | grep -v tmp | grep -v \/opt\/ > /tmp/777s
+  oldIFS=$IFS; IFS=$'\n'; for i in `cat /tmp/777s | grep -v "\./init"`; do if (echo $i | grep -q ^d); then sudo chmod 755 $(echo $i | awk '{print $2}'); else sudo chmod 644 $(echo $i | awk '{print $2}'); fi; done; IFS=$oldIFS
   cat /tmp/777s | grep -v "\./init"
   space
-  red "The above files/directories have 777 permissions. Please change them to 755 or 644"
   space 
 }
 
-function PAMpwquality(){
+function PAMConfigs(){
   sudo $noGUI apt install libpam-pwquality -yq $noOutput
   sudo cp /etc/pam.d/common-password /etc/pam.d/common-password.bak
   sudo cp /etc/pam.d/common-auth /etc/pam.d/common-auth.bak
   cat $SCRIPTDIR/Configs/pam.d/common-password > /etc/pam.d/common-password
   cat $SCRIPTDIR/Configs/pam.d/common-auth  > /etc/pam.d/common-auth
+  cat $SCRIPTDIR/Configs/pam.d/passwd > /etc/pam.d/passwd
 }
 
+function bashrc(){
+  #/etc/bash.bashrc
+  #/home/users/.bashrc
+  #/etc/skel/.bashrc
+  #/root/.bashrc
+  for i in `ls -a /home | grep -ve "\."`; do cd /home/$i; cat $SCRIPTDIR/Configs/.bashrc > /home/$i/.bashrc; chmod 644 .bashrc; done
+  cat $SCRIPTDIR/Configs/bashrc/.bashrc > /root/.bashrc; chmod 644 /root/.bashrc
+  cat $SCRIPTDIR/Configs/bashrc/.bashrc > /etc/skel/.bashrc; chmod 644 /etc/skel/.bashrc
+  cat $SCRIPTDIR/Configs/bashrc/bash.bashrc > /etc/bash.bashrc; chmod 644 /etc/bash.bashrc
+  clear
+}
+
+function initd(manual){
+  clear
+  space
+  red "These are possibly corrupt startup files... inspect."
+  space
+  grep -Fxvf $SCRIPTDIR/InfoFiles/init.d $(ls -la /etc/init.d | awk '{print $9}')
+  clear
+}
+
+function Services(){
+  service2systemctl=(["apache2"]="apache2" ["lightdm"]="lightdm" ["phpmyadmin"]="phpmyadmin" ["wordpress"]="wordpress" ["mariadb-server"]="mariadb" ["openvpn"]="openvpn" ["postgresql"]="postgresql" ["mysql-server"]="mysql" ["samba"]="smbd" ["vsftpd"]="vsftpd" ["proftpd"]="proftpd" ["pure-ftpd"]="pure-ftpd" ["ssh"]="ssh" ["bind9"]="bind9")
+  SERVICES=()
+  for i in `cat $SCRIPTDIR/Inputs/criticalservices.txt`; do sudo $noGUI apt install $i -yq $noOutput; SERVICES+=($i); done
+  for i in ${SERVICES[@]}; do sudo systemctl unmask ${service2systemctl[$i]} $noOutput; sudo systemctl restart ${service2systemctl[$i]} $noOutput; sudo systemctl enable ${service2systemctl[$i]} $noOutput; done
+  clear
+  $(grep -Fxvf $SCRIPTDIR/InfoFiles/OKservices $(service --status-all | awk -F " " '{print $NF}') | grep -v ccsclient) 
+}
+
+
 function Comments(){
+
+  #unmask all services
+  #!/bin/sh in bin or /sbin or home cat 
+
+  # Cypat could mess with pam's other service folders --> gdm, sshd, etc. (PAM)
+  # Log everything you do and if it gives you a point?
 
   # expire every user's password except ur own
 
@@ -555,3 +594,9 @@ InstallPackages()
 ProhibitedFiles()
 DeleteBadUsers()
 BadPackages(manual)
+SSHKeyGen()
+CriticalServicePackages()
+EtcPermissions(ERRORCHECK)
+System777Check(ERRORCHECK)
+bashrc()
+PAMConfigs()
