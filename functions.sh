@@ -402,6 +402,7 @@ function initd(manual){
   space
   red "These are possibly corrupt startup files... inspect."
   space
+  #cannot grep -Fxvf a file and command
   grep -Fxvf $SCRIPTDIR/InfoFiles/init.d $(ls -la /etc/init.d | awk '{print $9}')
   clear
 }
@@ -412,7 +413,8 @@ function Services(){
   for i in `cat $SCRIPTDIR/Inputs/criticalservices.txt`; do sudo $noGUI apt install $i -yq $noOutput; SERVICES+=($i); done
   for i in ${SERVICES[@]}; do sudo systemctl unmask ${service2systemctl[$i]} $noOutput; sudo systemctl restart ${service2systemctl[$i]} $noOutput; sudo systemctl enable ${service2systemctl[$i]} $noOutput; done
   clear
-  $(grep -Fxvf $SCRIPTDIR/InfoFiles/OKservices $(service --status-all | awk -F " " '{print $NF}') | grep -v ccsclient) 
+  #cannot grep -Fxvf a file and command
+  $(grep -Fxvf $SCRIPTDIR/InfoFiles/OKservices $(service --status-all | awk -F " " '{print $NF}'))
 }
 
 
