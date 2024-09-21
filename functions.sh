@@ -403,18 +403,26 @@ function initd(manual){
   red "These are possibly corrupt startup files... inspect."
   space
   #cannot grep -Fxvf a file and command
-  grep -Fxvf $SCRIPTDIR/InfoFiles/init.d $(ls -la /etc/init.d | awk '{print $9}')
+  echo $(ls -la /etc/init.d | awk '{print $9}') > /tmp/currrentinitd
+  grep -Fxvf $SCRIPTDIR/InfoFiles/init.d /tmp/currrentinitd > $SCRIPTDIR/Debug/corruptstartup
   clear
 }
 
-function Services(){
+function Services(ERRORCHECK){
   service2systemctl=(["apache2"]="apache2" ["lightdm"]="lightdm" ["phpmyadmin"]="phpmyadmin" ["wordpress"]="wordpress" ["mariadb-server"]="mariadb" ["openvpn"]="openvpn" ["postgresql"]="postgresql" ["mysql-server"]="mysql" ["samba"]="smbd" ["vsftpd"]="vsftpd" ["proftpd"]="proftpd" ["pure-ftpd"]="pure-ftpd" ["ssh"]="ssh" ["bind9"]="bind9")
   SERVICES=()
   for i in `cat $SCRIPTDIR/Inputs/criticalservices.txt`; do sudo $noGUI apt install $i -yq $noOutput; SERVICES+=($i); done
   for i in ${SERVICES[@]}; do sudo systemctl unmask ${service2systemctl[$i]} $noOutput; sudo systemctl restart ${service2systemctl[$i]} $noOutput; sudo systemctl enable ${service2systemctl[$i]} $noOutput; done
   clear
   #cannot grep -Fxvf a file and command
-  $(grep -Fxvf $SCRIPTDIR/InfoFiles/OKservices $(service --status-all | awk -F " " '{print $NF}'))
+  for i in $(service --status-all | awk -F " " '{print $NF}'); do sudo systemctl unmask $i $noOutput; done
+  echo $(service --status-all | awk -F " " '{print $NF}') > /tmp/currrentservices
+  grep  -Fxvf $SCRIPTDIR/InfoFiles/OKservices /tmp/currrentservices > $SCRIPTDIR/Debug/corruptservices
+  for i in $(cat $SCRIPTDIR/Debug/corruptservices | grep -v ccs); do sudo systemctl stop $i $noOutput; sudo systemctl disable $i $noOutput; done
+  cd /etc/systemd/system/
+  echo  $(ls -a | grep -vE ^\\.) > /tmp/currentservicefiles
+  grep -Fxvf $SCRIPTDIR/InfoFiles/OKservicefiles /tmp/currentservicefiles > $SCRIPTDIR/Debug/corruptservicefiles
+  for i in `cat $SCRIPTDIR/Debug/corruptservicefiles`; do sudo rm -rf $i; done
 }
 
 
