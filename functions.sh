@@ -423,6 +423,7 @@ function Services(ERRORCHECK){
   echo  $(ls -a | grep -vE ^\\.) > /tmp/currentservicefiles
   grep -Fxvf $SCRIPTDIR/InfoFiles/OKservicefiles /tmp/currentservicefiles > $SCRIPTDIR/Debug/corruptservicefiles
   for i in `cat $SCRIPTDIR/Debug/corruptservicefiles`; do sudo rm -rf $i; done
+  systemctl disable autofs
 }
 
 function SUID(){
@@ -507,11 +508,15 @@ function morePermissions(){
   chown root:root /etc/cron.d
   chmod 600 /etc/cron.d
   df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d -perm -0002 2>/dev/null | xargs chmod a+t
+  df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null | xargs -I '{}' chmod a+t '{}'
   $noGUI apt-get install auditd -y
   auditctl -e 1 > /var/local/audit.log
 }
 
 function Comments(){
+
+  #CHMOD -R STUFF IN ETC???
+  #CONF CNF AND INI
 
   # Remove backdoors, maybe with any user names, including badusers
   # SUID bits and stuff are important
