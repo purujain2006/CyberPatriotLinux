@@ -1,0 +1,15 @@
+/run/postgresql
+/run/postgresql/14-main.pg_stat_tmp
+/run/log/journal
+/usr/libexec/camel-lock-helper-1.2
+/usr/libexec/nslogin
+/usr/local/share/fonts
+/usr/lib/xorg/Xorg.wrap
+/var/log/journal
+/var/mail
+/var/local
+/var/crash
+/var/metrics
+/etc/chatscripts
+/etc/ppp/peers
+/etc/bind

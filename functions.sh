@@ -425,6 +425,18 @@ function Services(ERRORCHECK){
   for i in `cat $SCRIPTDIR/Debug/corruptservicefiles`; do sudo rm -rf $i; done
 }
 
+function SUID(){
+  echo $(find / -perm /4000 2> /dev/null | grep -v snap) > /tmp/currentsuid
+  grep -Fxvf $SCRIPTDIR/InfoFiles/OKsuid /tmp/currentsuid > $SCRIPTDIR/Debug/corruptsuid
+  for i in `cat $SCRIPTDIR/Debug/corruptsuid`; do sudo chmod u-s $i $noOutput; done
+}
+
+function SGID(){
+  echo $(find / -perm /2000 2> /dev/null | grep -v snap) > /tmp/currentsgid
+  grep -Fxvf $SCRIPTDIR/InfoFiles/OKsgid /tmp/currentsgid > $SCRIPTDIR/Debug/corruptsgid
+  for i in `cat $SCRIPTDIR/Debug/corruptsgid`; do sudo chmod g-s $i $noOutput; done
+}
+
 
 function Comments(){
 
