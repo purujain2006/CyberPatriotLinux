@@ -515,6 +515,8 @@ function morePermissions(){
 
 function Comments(){
 
+
+  #check out morePermission's apache2 stuff
   #CHMOD -R STUFF IN ETC???
   #CONF CNF AND INI
 
