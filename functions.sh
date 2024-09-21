@@ -428,6 +428,9 @@ function Services(ERRORCHECK){
 
 function Comments(){
 
+  # Remove backdoors, maybe with any user names, including badusers
+  # SUID bits and stuff are important
+
   #unmask all services
   #!/bin/sh in bin or /sbin or home cat 
 
