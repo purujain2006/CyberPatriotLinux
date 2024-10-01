@@ -511,6 +511,14 @@ function morePermissions(){
   df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null | xargs -I '{}' chmod a+t '{}'
   $noGUI apt-get install auditd -y
   auditctl -e 1 > /var/local/audit.log
+  echo "Authorized uses only. All activity may be monitored and reported." > /etc/issue
+  echo "Authorized uses only. All activity may be monitored and reported." > /etc/issue.net
+  chown root:root /etc/motd
+  chmod 644 /etc/motd
+  chown root:root /etc/issue
+  chmod 644 /etc/issue
+  chown root:root /etc/issue.net
+  chmod 644 /etc/issue.net
 }
 
 function Comments(){
