@@ -521,6 +521,13 @@ function morePermissions(){
   chmod 644 /etc/issue.net
 }
 
+function resolvConf(){
+  clear
+  sudo apt-get remove --purge resolvconf && sudo apt-get install resolvconf $noOutput
+  clear
+}
+
+
 function Comments(){
 
 
